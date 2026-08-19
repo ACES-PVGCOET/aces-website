@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import Logo from "@/components/Logo";
 import {
   DiscordIcon,
@@ -18,12 +19,12 @@ export interface FooterLink {
 }
 
 const mainSectionLinks: FooterLink[] = [
-  { label: "Home", href: "#home" },
-  { label: "About Us", href: "#about" },
-  { label: "Events & Hackathons", href: "#events", badge: "Hot" },
-  { label: "Projects", href: "#projects" },
-  { label: "Core Team", href: "#team" },
-  { label: "Contact Us", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "Events & Hackathons", href: "/events", badge: "Hot" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Core Team", href: "/team" },
+  { label: "Contact Us", href: "/#contact" },
 ];
 
 const socialLinks = [
@@ -50,9 +51,9 @@ export default function Footer() {
           {/* Brand Info & Motto */}
           <div className="lg:col-span-5 space-y-6">
             <div className="space-y-3">
-              <a href="#home" className="inline-block">
+              <Link href="/" className="inline-block">
                 <Logo textClassName="font-zen font-bold text-2xl tracking-wider text-white" />
-              </a>
+              </Link>
               <p className="text-xs font-mono text-purple-300/90 font-medium tracking-wide uppercase">
                 Association of Computer Engineering Students
               </p>
@@ -101,7 +102,7 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm text-slate-400 font-medium">
               {mainSectionLinks.map((link) => (
                 <li key={link.label}>
-                  <a
+                  <Link
                     href={link.href}
                     className="hover:text-purple-300 transition-colors inline-flex items-center gap-2 group"
                   >
@@ -112,7 +113,7 @@ export default function Footer() {
                         {link.badge}
                       </span>
                     )}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

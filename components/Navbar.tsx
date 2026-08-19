@@ -1,52 +1,71 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import Logo from "@/components/Logo";
 
 export interface NavItem {
   label: string;
   href: string;
-  active?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { label: "Home", href: "#home", active: true },
-  { label: "About", href: "#about" },
-  { label: "Events", href: "#events" },
-  { label: "Projects", href: "#projects" },
-  { label: "Team", href: "#team" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Sponsors", href: "/#sponsors" },
+  { label: "Events", href: "/events" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Team", href: "/team" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isItemActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+    if (href.startsWith("/")) {
+      const route = href.split("#")[0];
+      if (route.length > 1 && pathname.startsWith(route)) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   return (
     <header className="relative z-50 max-w-7xl mx-auto px-6 sm:px-10 h-24 flex items-center justify-between">
       {/* Brand Logo */}
-      <a href="#home">
+      <Link href="/">
         <Logo />
-      </a>
+      </Link>
 
       {/* Center Nav Links (Desktop) */}
       <nav className="hidden md:flex items-center gap-10 text-sm font-medium text-slate-300">
-        {navItems.map((item) => (
-          <a
-            key={item.label}
-            href={item.href}
-            className={
-              item.active
-                ? "relative text-white font-semibold flex flex-col items-center"
-                : "hover:text-purple-300 transition-colors"
-            }
-          >
-            {item.label}
-            {item.active && (
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1 shadow-[0_0_8px_rgba(168,85,247,1)]" />
-            )}
-          </a>
-        ))}
+        {navItems.map((item) => {
+          const active = isItemActive(item.href);
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={
+                active
+                  ? "relative text-white font-semibold flex flex-col items-center"
+                  : "hover:text-purple-300 transition-colors"
+              }
+            >
+              {item.label}
+              {active && (
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1 shadow-[0_0_8px_rgba(168,85,247,1)]" />
+              )}
+            </Link>
+          );
+        })}
       </nav>
 
       {/* Right CTA Button & Mobile Toggle */}
@@ -69,26 +88,30 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 top-24 z-40 bg-[#06020c]/95 backdrop-blur-xl md:hidden flex flex-col p-6 animate-in fade-in slide-in-from-top-4 duration-200">
           <nav className="flex flex-col gap-6 text-lg font-medium text-slate-200">
-            {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={
-                  item.active
-                    ? "text-purple-400 font-semibold flex items-center justify-between"
-                    : "hover:text-purple-300 transition-colors"
-                }
-              >
-                <span>{item.label}</span>
-                {item.active && (
-                  <span className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(168,85,247,1)]" />
-                )}
-              </a>
-            ))}
+            {navItems.map((item) => {
+              const active = isItemActive(item.href);
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={
+                    active
+                      ? "text-purple-400 font-semibold flex items-center justify-between"
+                      : "hover:text-purple-300 transition-colors"
+                  }
+                >
+                  <span>{item.label}</span>
+                  {active && (
+                    <span className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(168,85,247,1)]" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
         </div>
       )}
     </header>
   );
 }
+

@@ -27,6 +27,8 @@ module.exports = {
         'spin-slow': 'spin 20s linear infinite',
         'scanline': 'scanline 8s linear infinite',
         'float': 'float 6s ease-in-out infinite',
+        'marquee': 'marquee 25s linear infinite',
+        'marquee-reverse': 'marquee-reverse 25s linear infinite',
       },
       keyframes: {
         pulseGlow: {
@@ -40,6 +42,14 @@ module.exports = {
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'marquee-reverse': {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0%)' },
         },
       },
       backgroundImage: {
