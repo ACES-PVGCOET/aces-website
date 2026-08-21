@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import {
-  DiscordIcon,
+  YoutubeIcon,
   InstagramIcon,
   LinkedinIcon,
   GithubIcon,
@@ -22,11 +22,11 @@ const mainSectionLinks: FooterLink[] = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Core Team", href: "/team" },
-  { label: "Contact Us", href: "/#contact" },
+  { label: "Publications", href: "/publications" },
 ];
 
 const socialLinks = [
-  { name: "YouTube", href: "https://youtube.com/@acespvgcoet5962", icon: DiscordIcon, hoverColor: "hover:text-red-400 hover:border-red-500/50 hover:bg-[#5865F2]/10" },
+  { name: "YouTube", href: "https://youtube.com/@acespvgcoet5962", icon: YoutubeIcon, hoverColor: "hover:text-[#FF0000] hover:border-[#FF0000]/50 hover:bg-[#FF0000]/10" },
   { name: "Instagram", href: "https://www.instagram.com/acespvg", icon: InstagramIcon, hoverColor: "hover:text-[#E4405F] hover:border-[#E4405F]/50 hover:bg-[#E4405F]/10" },
   { name: "LinkedIn", href: "https://in.linkedin.com/school/acespvg/", icon: LinkedinIcon, hoverColor: "hover:text-[#0A66C2] hover:border-[#0A66C2]/50 hover:bg-[#0A66C2]/10" },
 ];
@@ -83,12 +83,21 @@ export default function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={social.name}
+                      title={social.name}
                       className={`w-10 h-10 rounded-xl bg-purple-950/40 border border-purple-800/40 text-slate-300 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-[0_0_10px_rgba(0,0,0,0.5)] ${social.hoverColor}`}
                     >
                       <Icon className="w-4 h-4" />
                     </a>
                   );
                 })}
+                <a
+                  href="mailto:aces@pvgcoet.ac.in"
+                  aria-label="Email ACES"
+                  title="aces@pvgcoet.ac.in"
+                  className="w-10 h-10 rounded-xl bg-purple-950/40 border border-purple-800/40 text-purple-400 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-[0_0_10px_rgba(0,0,0,0.5)] hover:text-purple-300 hover:border-purple-500/50 hover:bg-purple-500/10"
+                >
+                  <Mail className="w-4 h-4" />
+                </a>
               </div>
             </div>
           </div>

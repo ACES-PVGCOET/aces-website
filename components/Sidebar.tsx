@@ -12,7 +12,7 @@ export default function Sidebar() {
         <a
           href="https://youtube.com/@acespvgcoet5962?si=M5KkrUZv2dNCc1No"
           className="hover:text-purple-400 transition-colors transform hover:scale-110"
-          title="Discord"
+          title="YouTube"
           target="_blank"
           rel="noopener noreferrer"
         >

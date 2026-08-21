@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import NeuralNetworkBackground from "@/components/NeuralNetworkBackground";
 import SpotlightCard from "@/components/SpotlightCard";
+import FormModal from "@/components/FormModal";
 import {
   Sparkles,
   Target,
@@ -25,28 +26,30 @@ import {
 import milestones from "@/data/milestones";
 
 export default function AboutPage() {
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+
   const stats = [
     {
-      value: "1,200+",
+      value: "250+",
       label: "Active Student Members",
-      desc: "Engineers, coders & tech builders",
+      desc: "Coders, Innovators & tech builders",
       icon: Users,
     },
     {
-      value: "45+",
+      value: "15+",
       label: "Events & Workshops / Yr",
-      desc: "Hackathons, symposiums & webinars",
+      desc: "Hackathons, Sessions & webinars",
       icon: Calendar,
     },
     {
-      value: "₹5,00,000+",
+      value: "₹2,00,000+",
       label: "Prizes & Grants Pool",
       desc: "Awarded across flagship competitions",
       icon: Trophy,
     },
     {
-      value: "3,500+",
-      label: "Global Alumni Network",
+      value: "500+",
+      label: "International Alumni Network",
       desc: "Leading top tech firms worldwide",
       icon: Globe,
     },
@@ -61,7 +64,7 @@ export default function AboutPage() {
       badge: "SKILL BUILDING",
     },
     {
-      title: "Innovation & Research",
+      title: "Innovation",
       description:
         "Fostering breakthrough student-led research, open-source projects, and rapid prototyping of real-world software solutions.",
       icon: Rocket,
@@ -321,15 +324,13 @@ export default function AboutPage() {
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-              <button className="px-8 py-3.5 rounded-full border border-purple-500/50 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm transition-all duration-300 shadow-[0_0_25px_rgba(168,85,247,0.5)] hover:shadow-[0_0_35px_rgba(168,85,247,0.8)] flex items-center gap-2">
-                Join ACES Committee <ArrowRight className="w-4 h-4" />
-              </button>
-              <Link
-                href="/#contact"
-                className="px-8 py-3.5 rounded-full border border-slate-700 hover:border-purple-500/40 bg-slate-900/60 text-slate-300 hover:text-white font-medium text-sm transition-all duration-300"
+              <button
+                onClick={() => setIsJoinModalOpen(true)}
+                className="px-8 py-3.5 rounded-full border border-purple-500/50 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm transition-all duration-300 shadow-[0_0_25px_rgba(168,85,247,0.5)] hover:shadow-[0_0_35px_rgba(168,85,247,0.8)] flex items-center gap-2 cursor-pointer"
               >
-                Contact Us
-              </Link>
+                <span>Join ACES Committee</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </section>
@@ -340,6 +341,13 @@ export default function AboutPage() {
 
       {/* Footer Section */}
       <Footer />
+
+      {/* Join Form Modal */}
+      <FormModal
+        formId="6a8875e5b3701104fe3b9965"
+        isOpen={isJoinModalOpen}
+        onClose={() => setIsJoinModalOpen(false)}
+      />
     </div>
   );
 }

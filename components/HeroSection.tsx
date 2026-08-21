@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import CyberGlobeSkeleton from "@/components/CyberGlobeSkeleton";
 import Particles from "./Particles";
 
@@ -43,18 +44,13 @@ export default function HeroSection() {
           {/* Action Buttons */}
           <div className="pt-4 flex items-center gap-5">
             {/* Primary Pill Button */}
-            <button className="px-7 py-3.5 rounded-full bg-purple-950/70 border border-purple-500/80 text-white font-medium text-sm hover:bg-purple-900 hover:border-purple-400 transition-all duration-300 shadow-[0_0_25px_rgba(168,85,247,0.4)] hover:shadow-[0_0_35px_rgba(168,85,247,0.7)] flex items-center gap-2 group">
-              Explore ACES
+            <Link
+              href="/about"
+              className="px-7 py-3.5 rounded-full bg-purple-950/70 border border-purple-500/80 text-white font-medium text-sm hover:bg-purple-900 hover:border-purple-400 transition-all duration-300 shadow-[0_0_25px_rgba(168,85,247,0.4)] hover:shadow-[0_0_35px_rgba(168,85,247,0.7)] flex items-center gap-2 group"
+            >
+              <span>Explore ACES</span>
               <ArrowRight className="w-4 h-4 text-purple-300 group-hover:translate-x-1 transition-transform" />
-            </button>
-
-            {/* Secondary Watch Video Button */}
-            <button className="flex items-center gap-3 text-slate-300 hover:text-white font-medium text-sm transition-colors group">
-              <span>Watch Video</span>
-              <div className="w-9 h-9 rounded-full border border-purple-500/60 flex items-center justify-center text-purple-300 group-hover:bg-purple-500/20 group-hover:border-purple-400 transition-all">
-                <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
-              </div>
-            </button>
+            </Link>
           </div>
         </div>
 
