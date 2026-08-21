@@ -2,7 +2,7 @@ import { MagazineItem, GalleryShowcaseResponse } from "../types/publications";
 
 const getBaseUrl = () => {
   return (
-    process.env.NEXT_PUBLIC_API_URL || "https://aces-api-gdd3.onrender.com/api/v1"
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"
   );
 };
 
