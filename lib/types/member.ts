@@ -22,7 +22,8 @@ export type TeamCategory =
   | "Technical Team"
   | "Event Team"
   | "Media Team"
+  | "Marketing Team"
   | "Editorial Team"
   | "Treasury Team"
-  | "DnP Team"
+  | "Design Team"
   | "Production Team";

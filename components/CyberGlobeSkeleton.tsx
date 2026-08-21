@@ -4,7 +4,7 @@ import React from "react";
 
 export default function CyberGlobeSkeleton() {
   return (
-    <div className="relative w-full h-[520px] sm:h-[620px] lg:h-[720px] flex items-center justify-center overflow-hidden rounded-2xl bg-[#06020c]/40 border border-purple-900/30 backdrop-blur-md">
+    <div className="relative w-full h-[520px] sm:h-[620px] lg:h-[720px] flex items-center justify-center overflow-hidden rounded-2xl bg-black/40 border border-purple-900/30 backdrop-blur-md">
       <div className="relative w-72 h-72 sm:w-96 sm:h-96 md:w-[460px] md:h-[460px] flex items-center justify-center">
         {/* Outer Ring */}
         <div className="absolute inset-0 rounded-full border border-purple-500/20 animate-[ping_4s_linear_infinite]" />

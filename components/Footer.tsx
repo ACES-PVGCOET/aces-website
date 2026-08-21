@@ -21,18 +21,14 @@ export interface FooterLink {
 const mainSectionLinks: FooterLink[] = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
-  { label: "Events & Hackathons", href: "/events", badge: "Hot" },
-  { label: "Projects", href: "/#projects" },
   { label: "Core Team", href: "/team" },
   { label: "Contact Us", href: "/#contact" },
 ];
 
 const socialLinks = [
-  { name: "Discord", href: "https://discord.gg", icon: DiscordIcon, hoverColor: "hover:text-[#5865F2] hover:border-[#5865F2]/50 hover:bg-[#5865F2]/10" },
-  { name: "Instagram", href: "https://instagram.com", icon: InstagramIcon, hoverColor: "hover:text-[#E4405F] hover:border-[#E4405F]/50 hover:bg-[#E4405F]/10" },
-  { name: "LinkedIn", href: "https://linkedin.com", icon: LinkedinIcon, hoverColor: "hover:text-[#0A66C2] hover:border-[#0A66C2]/50 hover:bg-[#0A66C2]/10" },
-  { name: "GitHub", href: "https://github.com", icon: GithubIcon, hoverColor: "hover:text-white hover:border-slate-400 hover:bg-slate-800/60" },
-  { name: "Twitter", href: "https://twitter.com", icon: TwitterIcon, hoverColor: "hover:text-[#1DA1F2] hover:border-[#1DA1F2]/50 hover:bg-[#1DA1F2]/10" },
+  { name: "YouTube", href: "https://youtube.com/@acespvgcoet5962", icon: DiscordIcon, hoverColor: "hover:text-red-400 hover:border-red-500/50 hover:bg-[#5865F2]/10" },
+  { name: "Instagram", href: "https://www.instagram.com/acespvg", icon: InstagramIcon, hoverColor: "hover:text-[#E4405F] hover:border-[#E4405F]/50 hover:bg-[#E4405F]/10" },
+  { name: "LinkedIn", href: "https://in.linkedin.com/school/acespvg/", icon: LinkedinIcon, hoverColor: "hover:text-[#0A66C2] hover:border-[#0A66C2]/50 hover:bg-[#0A66C2]/10" },
 ];
 
 export default function Footer() {
@@ -52,7 +48,10 @@ export default function Footer() {
           <div className="lg:col-span-5 space-y-6">
             <div className="space-y-3">
               <Link href="/" className="inline-block">
-                <Logo textClassName="font-zen font-bold text-2xl tracking-wider text-white" />
+                <Logo
+                  iconClassName="h-10 sm:h-12 w-auto object-contain"
+                  textClassName="font-zen font-bold text-2xl tracking-wider text-white"
+                />
               </Link>
               <p className="text-xs font-mono text-purple-300/90 font-medium tracking-wide uppercase">
                 Association of Computer Engineering Students

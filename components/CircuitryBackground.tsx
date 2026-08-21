@@ -350,7 +350,7 @@ export default function CircuitryBackground() {
         // Inner hole center of via pad
         ctx.beginPath();
         ctx.arc(via.x, via.y, via.r * 0.45, 0, Math.PI * 2);
-        ctx.fillStyle = "#06020c";
+        ctx.fillStyle = "#000000";
         ctx.fill();
       });
 

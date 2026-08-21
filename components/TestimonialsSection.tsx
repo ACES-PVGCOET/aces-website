@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Mail, Quote, ChevronLeft, ChevronRight, Sparkles, Star, MessageSquare } from "lucide-react";
+import { Mail, Quote, ChevronLeft, ChevronRight, Star, MessageSquare } from "lucide-react";
 import { InstagramIcon, LinkedinIcon } from "./SocialIcons";
 import SpotlightCard from "./SpotlightCard";
 import testimonialsData from "@/app/data/testimonialsData.js";
@@ -10,6 +10,7 @@ interface Testimonial {
   person_name: string;
   title: string;
   testimony: string;
+  imagePath?: string;
   social: {
     instagram: string;
     linkedin: string;
@@ -76,11 +77,6 @@ export default function TestimonialsSection() {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/70 border border-purple-500/40 text-purple-300 text-xs font-mono tracking-widest uppercase shadow-[0_0_20px_rgba(168,85,247,0.25)]">
-            <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
-            COMMUNITY VOICES & TESTIMONIALS
-          </div>
-
           <h2 className="text-3xl sm:text-5xl font-zen text-white tracking-tight leading-tight">
             Inspired by Passion, Built for Impact
           </h2>
@@ -107,8 +103,16 @@ export default function TestimonialsSection() {
                 
                 {/* Glowing Avatar */}
                 <div className="relative mb-4 group">
-                  <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br ${getGradientTheme(activeIndex)} flex items-center justify-center text-white text-2xl sm:text-3xl font-bold tracking-wider shadow-[0_0_25px_rgba(168,85,247,0.5)] border-2 border-purple-400/50 transition-transform duration-500 group-hover:scale-105`}>
-                    {getInitials(testimonials[activeIndex].person_name)}
+                  <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br ${getGradientTheme(activeIndex)} flex items-center justify-center text-white text-2xl sm:text-3xl font-bold tracking-wider shadow-[0_0_25px_rgba(168,85,247,0.5)] border-2 border-purple-400/50 transition-transform duration-500 group-hover:scale-105 overflow-hidden`}>
+                    {testimonials[activeIndex].imagePath ? (
+                      <img
+                        src={testimonials[activeIndex].imagePath}
+                        alt={testimonials[activeIndex].person_name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      getInitials(testimonials[activeIndex].person_name)
+                    )}
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-purple-950 border border-purple-400/60 flex items-center justify-center text-purple-300 shadow-md">
                     <Star className="w-3.5 h-3.5 fill-purple-400 text-purple-400" />
@@ -225,8 +229,16 @@ export default function TestimonialsSection() {
                   {/* Card Header: Avatar + Social Links */}
                   <div className="flex items-center justify-between gap-3 mb-4">
                     <div className="flex items-center gap-3">
-                      <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${getGradientTheme(idx)} flex items-center justify-center text-white text-sm font-bold shadow-[0_0_12px_rgba(168,85,247,0.4)] border border-purple-300/40 shrink-0`}>
-                        {getInitials(item.person_name)}
+                      <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${getGradientTheme(idx)} flex items-center justify-center text-white text-sm font-bold shadow-[0_0_12px_rgba(168,85,247,0.4)] border border-purple-300/40 shrink-0 overflow-hidden`}>
+                        {item.imagePath ? (
+                          <img
+                            src={item.imagePath}
+                            alt={item.person_name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          getInitials(item.person_name)
+                        )}
                       </div>
                       <div>
                         <h4 className="text-white font-semibold text-sm sm:text-base group-hover:text-purple-300 transition-colors">

@@ -880,7 +880,7 @@ Deletes form document and cascades deletion to all related questions and submitt
 ---
 
 ### 6.6 Submit Form Response
-Submits answers to a form. Answers are validated against policy rules (character limits, option validity, required questions).
+Submits answers to a form along with mandatory form filler identification (email). Answers are validated against policy rules (character limits, option validity, required questions). A single email can submit only one response per form.
 
 - **Method**: `POST`
 - **Endpoint**: `/api/v1/forms/:form_id/responses`
@@ -888,6 +888,7 @@ Submits answers to a form. Answers are validated against policy rules (character
 - **Request Body Fields**:
   ```json
   {
+    "email": "filler@example.com",
     "answers": {
       "1": ["Cyber Knights"],
       "2": ["AI & ML"],
@@ -903,6 +904,7 @@ Submits answers to a form. Answers are validated against policy rules (character
     "data": {
       "response_id": "66bc400011223344556677aa",
       "form_id": "66bc30001122334455667799",
+      "email": "filler@example.com",
       "member_id": "66bc1234567890abcdef1001",
       "submitted_at": "2026-08-14T14:30:00.000Z"
     },
@@ -911,11 +913,37 @@ Submits answers to a form. Answers are validated against policy rules (character
   ```
 
 - **Error Responses**:
-  - `400 INVALID_INPUT`: Form is closed (`is_active: false`), missing required answers, textual answer exceeds `max_len`, or invalid multiple-choice selection.
+  - `400 INVALID_INPUT`: Form filler email is missing/invalid, response has already been submitted with this email address, form is closed (`is_active: false`), missing required answers, textual answer exceeds `max_len`, or invalid multiple-choice selection.
 
 ---
 
-### 6.7 Get Form Responses List
+### 6.7 Check Response Existence by Email
+Checks whether a response has already been recorded for a specific email address on a form.
+
+- **Method**: `GET`
+- **Endpoint**: `/api/v1/forms/:form_id/responses/check`
+- **Auth**: Optional / Public
+- **Query Parameters**:
+  | Parameter | Type | Required | Description |
+  | :--- | :--- | :--- | :--- |
+  | `email` | String | Yes | Form filler email address to query. |
+
+- **Response (`200 OK`)**:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "form_id": "66bc30001122334455667799",
+      "email": "filler@example.com",
+      "exists": true
+    },
+    "error": null
+  }
+  ```
+
+---
+
+### 6.8 Get Form Responses List
 
 - **Method**: `GET`
 - **Endpoint**: `/api/v1/forms/:form_id/responses`
@@ -931,6 +959,7 @@ Submits answers to a form. Answers are validated against policy rules (character
       "responses": [
         {
           "response_id": "66bc400011223344556677aa",
+          "email": "filler@example.com",
           "member_id": "66bc1234567890abcdef1001",
           "submitted_at": "2026-08-14T14:30:00.000Z",
           "answers": {
@@ -946,7 +975,7 @@ Submits answers to a form. Answers are validated against policy rules (character
 
 ---
 
-### 6.8 Get Single Response Detail
+### 6.9 Get Single Response Detail
 
 - **Method**: `GET`
 - **Endpoint**: `/api/v1/forms/:form_id/responses/:response_id`

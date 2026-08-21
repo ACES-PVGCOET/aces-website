@@ -9,7 +9,7 @@ import EventCard from "@/components/EventCard";
 import EventDetailModal from "@/components/EventDetailModal";
 import { getAllEvents } from "@/lib/api/eventsApi";
 import { ApiEvent } from "@/lib/types/events";
-import { Sparkles, Calendar, RefreshCw, AlertCircle, Filter } from "lucide-react";
+import { Calendar, RefreshCw, AlertCircle, Filter } from "lucide-react";
 
 type CategoryFilter = "All Events" | "Featured Only";
 
@@ -47,13 +47,13 @@ export default function EventsPage() {
   });
 
   return (
-    <div className="relative min-h-screen bg-[#06020c] text-slate-100 font-sans overflow-x-hidden selection:bg-purple-600 selection:text-white">
+    <div className="relative min-h-screen bg-black text-slate-100 font-sans overflow-x-hidden selection:bg-purple-600 selection:text-white">
       {/* Interactive Neural Network Background Pattern */}
       <NeuralNetworkBackground />
 
-      {/* Ambient Radial Glows */}
-      <div className="fixed top-1/4 right-1/4 w-[650px] h-[650px] bg-purple-600/15 rounded-full blur-[150px] pointer-events-none z-0" />
-      <div className="fixed top-10 left-10 w-96 h-96 bg-violet-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
+      {/* Ambient Radial Glows (subtle) */}
+      <div className="fixed top-1/4 right-1/4 w-[650px] h-[650px] bg-purple-600/5 rounded-full blur-[150px] pointer-events-none z-0" />
+      <div className="fixed top-10 left-10 w-96 h-96 bg-violet-600/5 rounded-full blur-[120px] pointer-events-none z-0" />
 
       {/* Top Navigation Bar */}
       <Navbar />
@@ -61,11 +61,6 @@ export default function EventsPage() {
       <main className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 pt-8 pb-28 space-y-12">
         {/* Header Banner */}
         <section className="text-center pt-8 max-w-3xl mx-auto space-y-5">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/40 bg-purple-950/40 text-purple-300 text-xs font-mono tracking-wider uppercase shadow-[0_0_20px_rgba(168,85,247,0.25)]">
-            <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
-            <span>FLAGSHIP INITIATIVES & COMPETITIONS</span>
-          </div>
-
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
             All Events &{" "}
             <span className="bg-gradient-to-r from-purple-400 via-violet-300 to-indigo-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(168,85,247,0.5)]">

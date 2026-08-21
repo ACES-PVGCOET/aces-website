@@ -20,30 +20,7 @@ export default function TeamFilterBar({
   return (
     <div className="space-y-6">
       {/* Top Bar: Category Title & Member Count */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-purple-950/20 border border-purple-900/40 p-4 px-6 rounded-2xl backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-purple-400">
-            <Users className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white font-mono">
-              {selectedCategory.toUpperCase()}
-            </h3>
-            <p className="text-xs text-slate-400">
-              Filter by department to explore active committee members
-            </p>
-          </div>
-        </div>
-
-        {/* Info Badge */}
-        <div className="flex items-center gap-2 text-xs font-mono text-slate-300">
-          <Filter className="w-3.5 h-3.5 text-purple-400" />
-          <span>TOTAL:</span>
-          <span className="px-2.5 py-1 rounded-md bg-purple-900/50 border border-purple-500/40 text-purple-200 font-bold">
-            {totalMembersCount} {totalMembersCount === 1 ? "MEMBER" : "MEMBERS"}
-          </span>
-        </div>
-      </div>
+      
 
       {/* Horizontal Scrollable Category Filter Pills */}
       <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none no-scrollbar">

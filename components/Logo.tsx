@@ -8,28 +8,34 @@ export interface LogoProps {
   onClick?: () => void;
 }
 
-export function LogoIcon({ className = "w-8 h-8 text-purple-400 drop-shadow-[0_0_10px_rgba(168,85,247,0.8)]" }: { className?: string }) {
+export function LogoIcon({ className = "h-8 w-auto object-contain" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" fill="none" className={className}>
-      <path d="M16 3L30 27H2L16 3Z" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
-      <path d="M16 10L23 23H9L16 10Z" fill="currentColor" opacity="0.6" />
-    </svg>
+    <img
+      src="/logo.png"
+      alt="ACES Logo"
+      className={`object-contain ${className}`}
+      onError={(e) => {
+        const target = e.target as HTMLImageElement;
+        if (!target.src.endsWith("/logo.jpeg")) {
+          target.src = "/logo.jpeg";
+        }
+      }}
+    />
   );
 }
 
 export default function Logo({
   showText = true,
   className = "",
-  iconClassName = "w-8 h-8 text-purple-400 drop-shadow-[0_0_10px_rgba(168,85,247,0.8)]",
+  iconClassName = "h-9 w-auto object-contain",
   textClassName = "font-zen font-bold text-xl tracking-wider text-white",
   onClick,
 }: LogoProps) {
   return (
     <div className={`flex items-center gap-3 cursor-pointer select-none ${className}`} onClick={onClick}>
-      <div className="w-8 h-8 flex items-center justify-center">
-        <LogoIcon className={iconClassName} />
-      </div>
+      <LogoIcon className={iconClassName} />
       {showText && <span className={textClassName}>ACES</span>}
     </div>
   );
 }
+

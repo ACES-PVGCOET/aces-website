@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import SpotlightCard from "./SpotlightCard";
 import { TeamMember } from "@/lib/types/member";
 import {
@@ -9,7 +8,7 @@ import {
   InstagramIcon,
   LinkedinIcon,
 } from "./SocialIcons";
-import { Mail, ShieldCheck, User } from "lucide-react";
+import { Mail, User } from "lucide-react";
 
 interface MemberCardProps {
   member: TeamMember;
@@ -17,17 +16,6 @@ interface MemberCardProps {
 
 export default function MemberCard({ member }: MemberCardProps) {
   const [imageError, setImageError] = useState(false);
-
-  const getPositionBadgeColor = (pos: string) => {
-    const lower = pos.toLowerCase();
-    if (lower.includes("head") || lower.includes("president") || lower.includes("secretary")) {
-      return "border-purple-400/60 bg-purple-900/60 text-purple-200 shadow-[0_0_12px_rgba(168,85,247,0.4)]";
-    }
-    if (lower.includes("lead") || lower.includes("joint")) {
-      return "border-violet-500/40 bg-violet-950/50 text-violet-300";
-    }
-    return "border-slate-700/60 bg-slate-900/60 text-slate-300";
-  };
 
   const getInitials = (name: string) => {
     return name
@@ -39,106 +27,98 @@ export default function MemberCard({ member }: MemberCardProps) {
   };
 
   return (
-    <SpotlightCard className="p-6 flex flex-col justify-between space-y-6 group hover:border-purple-500/60 transition-all duration-300">
-      
-      {/* Top Header & Avatar */}
-      <div className="space-y-4 text-center flex flex-col items-center">
-        
-        {/* Avatar Image Container */}
-        <div className="relative w-24 h-24 rounded-full p-1 border-2 border-purple-500/40 bg-purple-950/60 shadow-[0_0_20px_rgba(168,85,247,0.3)] group-hover:scale-105 group-hover:border-purple-400 transition-all duration-300">
-          <div className="w-full h-full rounded-full overflow-hidden relative bg-purple-950 flex items-center justify-center">
-            {member.profile_photo_url && !imageError ? (
-              <img
-                src={member.profile_photo_url}
-                alt={member.name}
-                className="w-full h-full object-cover"
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-950 to-slate-950 text-white font-mono font-bold text-xl">
-                {member.name ? getInitials(member.name) : <User className="w-8 h-8 text-purple-400" />}
-              </div>
-            )}
+    <SpotlightCard className="p-0 flex flex-col h-full group transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_40px_-10px_rgba(168,85,247,0.4)] hover:border-purple-400/80 rounded-2xl overflow-hidden border border-purple-900/40 bg-purple-950/20 backdrop-blur-md">
+      {/* Rectangular Big Image Container */}
+      <div className="relative w-full aspect-[4/5] overflow-hidden bg-purple-950/40">
+        {member.profile_photo_url && !imageError ? (
+          <img
+            src={member.profile_photo_url}
+            alt={member.name}
+            className="w-full h-full object-cover object-center transform group-hover:scale-108 transition-transform duration-700 ease-out"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-purple-900/30 via-indigo-950/60 to-purple-950/90 text-white p-4">
+            <div className="w-16 h-16 rounded-full bg-purple-900/50 border border-purple-500/40 flex items-center justify-center mb-2 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+              {member.name ? (
+                <span className="font-mono font-bold text-2xl text-purple-300">{getInitials(member.name)}</span>
+              ) : (
+                <User className="w-8 h-8 text-purple-400" />
+              )}
+            </div>
+            <span className="text-xs text-purple-300/60 font-mono">ACES Member</span>
           </div>
+        )}
 
-          {/* Active Status Pulse Dot */}
-          <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-[#06020c] shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
-        </div>
+        {/* Ambient Dark Gradient Bottom Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-70 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none" />
 
-        {/* Member Name & Team */}
+        {/* Dynamic Light Sweep Highlight Effect on Hover */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
+      </div>
+
+      {/* Member Details & Social Links */}
+      <div className="p-5 flex flex-col flex-grow justify-between text-center space-y-4 relative z-10">
+        {/* Name and Position */}
         <div className="space-y-1.5">
-          <h3 className="text-xl font-bold text-white group-hover:text-purple-200 transition-colors">
+          <h3 className="text-xl font-bold text-white tracking-tight group-hover:text-purple-300 transition-colors duration-300 line-clamp-1">
             {member.name}
           </h3>
-
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-            {/* Position Badge */}
-            <span
-              className={`px-3 py-0.5 rounded-full text-[11px] font-mono font-semibold border ${getPositionBadgeColor(
-                member.position
-              )}`}
-            >
-              {member.position}
-            </span>
-
-            {/* Team Badge */}
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono border border-purple-900/40 bg-purple-950/40 text-purple-400">
-              {member.team}
-            </span>
-          </div>
+          <p className="text-xs font-mono font-semibold tracking-wider text-purple-400 uppercase drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">
+            {member.position}
+          </p>
         </div>
 
+        {/* Social Icons */}
+        <div className="pt-3 border-t border-purple-900/30 flex items-center justify-center gap-3">
+          {member.social_links?.linkedin && (
+            <a
+              href={member.social_links.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${member.name}'s LinkedIn`}
+              className="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/40 text-slate-300 hover:text-white hover:border-[#0A66C2] hover:bg-[#0A66C2]/20 hover:shadow-[0_0_15px_rgba(10,102,194,0.4)] flex items-center justify-center transition-all duration-300 hover:scale-110"
+            >
+              <LinkedinIcon className="w-4 h-4" />
+            </a>
+          )}
+
+          {member.social_links?.github && (
+            <a
+              href={member.social_links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${member.name}'s GitHub`}
+              className="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/40 text-slate-300 hover:text-white hover:border-slate-300 hover:bg-slate-800/80 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] flex items-center justify-center transition-all duration-300 hover:scale-110"
+            >
+              <GithubIcon className="w-4 h-4" />
+            </a>
+          )}
+
+          {member.social_links?.instagram && (
+            <a
+              href={member.social_links.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${member.name}'s Instagram`}
+              className="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/40 text-slate-300 hover:text-white hover:border-[#E4405F] hover:bg-[#E4405F]/20 hover:shadow-[0_0_15px_rgba(228,64,95,0.4)] flex items-center justify-center transition-all duration-300 hover:scale-110"
+            >
+              <InstagramIcon className="w-4 h-4" />
+            </a>
+          )}
+
+          {member.email && (
+            <a
+              href={`mailto:${member.email}`}
+              aria-label={`Email ${member.name}`}
+              className="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-800/40 text-slate-300 hover:text-white hover:border-purple-400 hover:bg-purple-900/40 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] flex items-center justify-center transition-all duration-300 hover:scale-110"
+            >
+              <Mail className="w-4 h-4" />
+            </a>
+          )}
+        </div>
       </div>
-
-      {/* Social Links Footer */}
-      <div className="pt-4 border-t border-purple-900/30 flex items-center justify-center gap-3">
-        {member.social_links?.linkedin && (
-          <a
-            href={member.social_links.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${member.name}'s LinkedIn`}
-            className="w-8 h-8 rounded-lg bg-purple-950/40 border border-purple-800/40 text-slate-300 hover:text-[#0A66C2] hover:border-[#0A66C2]/50 hover:bg-[#0A66C2]/10 flex items-center justify-center transition-all duration-300 hover:scale-110"
-          >
-            <LinkedinIcon className="w-3.5 h-3.5" />
-          </a>
-        )}
-
-        {member.social_links?.github && (
-          <a
-            href={member.social_links.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${member.name}'s GitHub`}
-            className="w-8 h-8 rounded-lg bg-purple-950/40 border border-purple-800/40 text-slate-300 hover:text-white hover:border-slate-400 hover:bg-slate-800/60 flex items-center justify-center transition-all duration-300 hover:scale-110"
-          >
-            <GithubIcon className="w-3.5 h-3.5" />
-          </a>
-        )}
-
-        {member.social_links?.instagram && (
-          <a
-            href={member.social_links.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${member.name}'s Instagram`}
-            className="w-8 h-8 rounded-lg bg-purple-950/40 border border-purple-800/40 text-slate-300 hover:text-[#E4405F] hover:border-[#E4405F]/50 hover:bg-[#E4405F]/10 flex items-center justify-center transition-all duration-300 hover:scale-110"
-          >
-            <InstagramIcon className="w-3.5 h-3.5" />
-          </a>
-        )}
-
-        {member.email && (
-          <a
-            href={`mailto:${member.email}`}
-            aria-label={`Email ${member.name}`}
-            className="w-8 h-8 rounded-lg bg-purple-950/40 border border-purple-800/40 text-slate-300 hover:text-purple-300 hover:border-purple-500/50 hover:bg-purple-900/30 flex items-center justify-center transition-all duration-300 hover:scale-110"
-          >
-            <Mail className="w-3.5 h-3.5" />
-          </a>
-        )}
-      </div>
-
     </SpotlightCard>
   );
 }
+

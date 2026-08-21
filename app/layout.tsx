@@ -23,7 +23,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased bg-cyber-dark text-slate-100">
+      <body className="antialiased bg-black text-slate-100">
         {children}
       </body>
     </html>

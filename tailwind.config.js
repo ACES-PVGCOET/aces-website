@@ -12,7 +12,7 @@ module.exports = {
       },
       colors: {
         cyber: {
-          dark: '#030712',
+          dark: '#000000',
           card: '#0B1120',
           border: '#1E293B',
           cyan: '#00f0ff',

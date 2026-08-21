@@ -1,4 +1,4 @@
-export const testimonialsData = [
+export const testimonials = [
   {
     person_name: "Nikhil Chavan",
     title: "General Secretary of ACES 2025-26",
@@ -67,4 +67,4 @@ export const testimonialsData = [
   }
 ];
 
-export default testimonialsData;
+export default testimonials;

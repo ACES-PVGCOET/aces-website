@@ -62,8 +62,8 @@ interface ActivePulse {
 export default function NeuralNetworkBackground({
   nodeCountMultiplier = 1.0,
   maxConnectionDistance = 170,
-  baseNodeOpacity = 0.08,
-  baseEdgeOpacity = 0.05,
+  baseNodeOpacity = 0.03,
+  baseEdgeOpacity = 0.02,
   interactionRadius = 240,
   pulseSpeed = 2.2,
   maxHops = 4,
@@ -159,14 +159,14 @@ export default function NeuralNetworkBackground({
           const px = c * cellW + jitterX;
           const py = r * cellH + jitterY;
 
-          // Hub nodes (~12% chance to be slightly larger 2.2-3px)
+          // Hub nodes (~12% chance to be slightly larger) - thinner radii
           const isHub = Math.random() < 0.12;
-          const radius = isHub ? Math.random() * 0.8 + 2.2 : Math.random() * 0.6 + 1.0;
+          const radius = isHub ? Math.random() * 0.4 + 1.4 : Math.random() * 0.3 + 0.7;
 
-          // Depth variation: subtle opacity differences per node
+          // Depth variation: subtle opacity differences per node (toned down)
           const nodeBaseOpacity = Math.max(
-            0.04,
-            Math.min(0.14, baseNodeOpacity + (Math.random() - 0.5) * 0.06)
+            0.015,
+            Math.min(0.05, baseNodeOpacity + (Math.random() - 0.5) * 0.03)
           );
 
           nodes.push({
@@ -223,11 +223,11 @@ export default function NeuralNetworkBackground({
 
             const edgeKey = i < cand.index ? `${i}-${cand.index}` : `${cand.index}-${i}`;
             if (!edgeLookupMap.has(edgeKey)) {
-              // Edge opacity decreases slightly with distance for visual depth
+              // Edge opacity decreases slightly with distance for visual depth (toned down)
               const distanceFactor = 1 - cand.dist / actualMaxDist;
               const edgeBaseOpacity = Math.max(
-                0.02,
-                Math.min(0.08, baseEdgeOpacity * (0.5 + distanceFactor * 0.7))
+                0.008,
+                Math.min(0.035, baseEdgeOpacity * (0.5 + distanceFactor * 0.7))
               );
 
               const edgeObj: Edge = {
@@ -282,7 +282,7 @@ export default function NeuralNetworkBackground({
       if (closestNodeIdx === -1) return;
 
       const startNode = nodes[closestNodeIdx];
-      startNode.activeIntensity = 1.0;
+      startNode.activeIntensity = 0.7;
 
       // Spawn pulses along all edges originating from startNode
       for (const neighborIdx of startNode.neighbors) {
@@ -293,7 +293,7 @@ export default function NeuralNetworkBackground({
           speed: pulseSpeed * (0.9 + Math.random() * 0.25),
           hop: 1,
           maxHops,
-          intensity: 0.95,
+          intensity: 0.6,
           visitedNodes: new Set([closestNodeIdx]),
         });
       }
@@ -307,7 +307,7 @@ export default function NeuralNetworkBackground({
 
     // Occasional faint idle micro-pulse
     let lastIdlePulseTime = performance.now();
-    const idlePulseInterval = 4500; // milliseconds
+    const idlePulseInterval = 5500; // milliseconds
 
     // Main Animation Loop
     let lastTime = performance.now();
@@ -324,8 +324,8 @@ export default function NeuralNetworkBackground({
         const tSec = time * 0.001;
         for (let i = 0; i < nodes.length; i++) {
           const n = nodes[i];
-          const offsetX = Math.sin(tSec * n.driftSpeed + n.driftPhase) * 2.5;
-          const offsetY = Math.cos(tSec * n.driftSpeed * 0.8 + n.driftPhase) * 2.5;
+          const offsetX = Math.sin(tSec * n.driftSpeed + n.driftPhase) * 2.0;
+          const offsetY = Math.cos(tSec * n.driftSpeed * 0.8 + n.driftPhase) * 2.0;
           n.x = n.baseX + offsetX;
           n.y = n.baseY + offsetY;
         }
@@ -333,7 +333,7 @@ export default function NeuralNetworkBackground({
         // Trigger occasional faint idle micro-pulse
         if (time - lastIdlePulseTime > idlePulseInterval) {
           lastIdlePulseTime = time;
-          if (nodes.length > 0 && Math.random() < 0.7) {
+          if (nodes.length > 0 && Math.random() < 0.6) {
             const randomNodeIdx = Math.floor(Math.random() * nodes.length);
             const randomNode = nodes[randomNodeIdx];
             if (randomNode.neighbors.length > 0) {
@@ -348,7 +348,7 @@ export default function NeuralNetworkBackground({
                 speed: pulseSpeed * 0.7,
                 hop: 1,
                 maxHops: 2,
-                intensity: 0.25,
+                intensity: 0.18,
                 visitedNodes: new Set([randomNodeIdx]),
               });
             }
@@ -406,7 +406,7 @@ export default function NeuralNetworkBackground({
                   speed: p.speed * (0.88 + Math.random() * 0.2),
                   hop: p.hop + 1,
                   maxHops: p.maxHops,
-                  intensity: p.intensity * 0.68, // Decay intensity per hop
+                  intensity: p.intensity * 0.6, // Decay intensity per hop
                   visitedNodes: nextVisited,
                 });
               }
@@ -419,7 +419,7 @@ export default function NeuralNetworkBackground({
       activePulses = remainingPulses;
 
       // 3. DECAY ACTIVE & HOVER INTENSITIES
-      const decayRate = deltaTime * 1.4; // Fades out smoothly over ~1.2s
+      const decayRate = deltaTime * 1.6; // Fades out smoothly
 
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i];
@@ -430,7 +430,7 @@ export default function NeuralNetworkBackground({
           const dist = Math.hypot(n.x - mouseX, n.y - mouseY);
           const hoverRadius = 140;
           if (dist < hoverRadius) {
-            const targetHover = (1 - dist / hoverRadius) * 0.22;
+            const targetHover = (1 - dist / hoverRadius) * 0.15;
             n.hoverIntensity += (targetHover - n.hoverIntensity) * 0.15;
           } else {
             n.hoverIntensity *= 0.88;
@@ -451,7 +451,7 @@ export default function NeuralNetworkBackground({
         }
       }
 
-      // 4. DRAW GRAPH EDGES (CONNECTIONS)
+      // 4. DRAW GRAPH EDGES (CONNECTIONS) - Thin lines & low opacity
       for (let i = 0; i < edges.length; i++) {
         const e = edges[i];
         const nA = nodes[e.from];
@@ -459,8 +459,8 @@ export default function NeuralNetworkBackground({
         if (!nA || !nB) continue;
 
         const combinedAlpha = Math.min(
-          0.95,
-          e.baseOpacity + e.hoverIntensity * 0.25 + e.activeIntensity * 0.85
+          0.45,
+          e.baseOpacity + e.hoverIntensity * 0.15 + e.activeIntensity * 0.4
         );
 
         ctx.beginPath();
@@ -468,15 +468,15 @@ export default function NeuralNetworkBackground({
         ctx.lineTo(nB.x, nB.y);
 
         if (e.activeIntensity > 0.08) {
-          // Illuminated active pulse edge
-          ctx.strokeStyle = `rgba(224, 180, 254, ${combinedAlpha})`;
-          ctx.lineWidth = 0.8 + e.activeIntensity * 0.8;
-          ctx.shadowColor = `rgba(${accentRgb}, 0.85)`;
-          ctx.shadowBlur = e.activeIntensity * 10;
+          // Illuminated active pulse edge (thin & subtle)
+          ctx.strokeStyle = `rgba(216, 180, 254, ${combinedAlpha})`;
+          ctx.lineWidth = 0.4 + e.activeIntensity * 0.4;
+          ctx.shadowColor = `rgba(${accentRgb}, 0.4)`;
+          ctx.shadowBlur = e.activeIntensity * 4;
         } else {
-          // Normal barely visible background trace
+          // Normal barely visible background trace (thin line)
           ctx.strokeStyle = `rgba(${accentRgb}, ${combinedAlpha})`;
-          ctx.lineWidth = 0.5 + e.hoverIntensity * 0.3;
+          ctx.lineWidth = 0.25 + e.hoverIntensity * 0.15;
           ctx.shadowBlur = 0;
         }
 
@@ -495,37 +495,37 @@ export default function NeuralNetworkBackground({
         const pulseY = nA.y + (nB.y - nA.y) * p.progress;
 
         const headAlpha = Math.min(
-          1.0,
-          p.intensity * Math.sin(p.progress * Math.PI) * 1.2
+          0.6,
+          p.intensity * Math.sin(p.progress * Math.PI) * 0.8
         );
 
         ctx.beginPath();
-        ctx.arc(pulseX, pulseY, 2.0 + p.intensity * 0.8, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${headAlpha})`;
-        ctx.shadowColor = `rgba(${accentRgb}, 0.95)`;
-        ctx.shadowBlur = 12 * p.intensity;
+        ctx.arc(pulseX, pulseY, 1.2 + p.intensity * 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245, 235, 255, ${headAlpha})`;
+        ctx.shadowColor = `rgba(${accentRgb}, 0.5)`;
+        ctx.shadowBlur = 4 * p.intensity;
         ctx.fill();
         ctx.shadowBlur = 0;
       }
 
-      // 6. DRAW NODES
+      // 6. DRAW NODES (Thin / small & subtle opacity)
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i];
         const nodeAlpha = Math.min(
-          1.0,
-          n.baseOpacity + n.hoverIntensity * 0.35 + n.activeIntensity * 0.9
+          0.5,
+          n.baseOpacity + n.hoverIntensity * 0.18 + n.activeIntensity * 0.45
         );
 
-        const currentRadius = n.radius + n.activeIntensity * 1.5 + n.hoverIntensity * 0.6;
+        const currentRadius = n.radius + n.activeIntensity * 0.6 + n.hoverIntensity * 0.3;
 
         ctx.beginPath();
         ctx.arc(n.x, n.y, currentRadius, 0, Math.PI * 2);
 
         if (n.activeIntensity > 0.1) {
-          // Glowing active node core
-          ctx.fillStyle = `rgba(245, 240, 255, ${nodeAlpha})`;
-          ctx.shadowColor = `rgba(${accentRgb}, 0.9)`;
-          ctx.shadowBlur = n.activeIntensity * 12;
+          // Active node core
+          ctx.fillStyle = `rgba(240, 230, 255, ${nodeAlpha})`;
+          ctx.shadowColor = `rgba(${accentRgb}, 0.5)`;
+          ctx.shadowBlur = n.activeIntensity * 4;
         } else {
           // Normal background node
           ctx.fillStyle = `rgba(${accentRgb}, ${nodeAlpha})`;
@@ -564,7 +564,7 @@ export default function NeuralNetworkBackground({
     <canvas
       ref={canvasRef}
       className={`fixed inset-0 pointer-events-none z-0 w-full h-full ${className}`}
-      style={{ opacity: 0.98 }}
+      style={{ opacity: 0.85 }}
     />
   );
 }

@@ -22,6 +22,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+import milestones from "@/data/milestones";
+
 export default function AboutPage() {
   const stats = [
     {
@@ -81,53 +83,15 @@ export default function AboutPage() {
     },
   ];
 
-  const timeline = [
-    {
-      year: "2018",
-      title: "Founding Era",
-      description:
-        "Established at PVGCOET as the primary technical student body for the Computer Engineering Department.",
-      tag: "ORIGIN",
-    },
-    {
-      year: "2020",
-      title: "Virtual Tech Summit Launch",
-      description:
-        "Pioneered online hackathons and interactive tech webinars, reaching over 2,000 participants nationwide.",
-      tag: "EXPANSION",
-    },
-    {
-      year: "2022",
-      title: "Industry Alliances & Tier-1 Sponsors",
-      description:
-        "Partnered with leading global technology brands, raising over ₹3L+ in prizes and student grant funds.",
-      tag: "GROWTH",
-    },
-    {
-      year: "2024",
-      title: "Special Interest Groups (SIGs)",
-      description:
-        "Launched domain-focused student guilds in Artificial Intelligence, Web3 Infrastructure, and Cyber Security.",
-      tag: "INNOVATION",
-    },
-    {
-      year: "2026",
-      title: "Next-Gen Cyber Ecosystem",
-      description:
-        "Introducing student incubator programs, open-source hackathons, and international tech collaborations.",
-      tag: "FUTURE",
-    },
-  ];
-
   return (
-    <div className="relative min-h-screen bg-[#06020c] text-slate-100 font-sans overflow-x-hidden selection:bg-purple-600 selection:text-white">
+    <div className="relative min-h-screen bg-black text-slate-100 font-sans overflow-x-hidden selection:bg-purple-600 selection:text-white">
       {/* Interactive Neural Network Background Pattern */}
       <NeuralNetworkBackground />
 
-      {/* Ambient Radial Background Glows */}
-      <div className="fixed top-1/4 right-1/4 w-[650px] h-[650px] bg-purple-600/15 rounded-full blur-[150px] pointer-events-none z-0" />
-      <div className="fixed top-10 left-10 w-96 h-96 bg-violet-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
-      <div className="fixed bottom-1/3 left-1/3 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none z-0" />
+      {/* Ambient Radial Background Glows (subtle) */}
+      <div className="fixed top-1/4 right-1/4 w-[650px] h-[650px] bg-purple-600/5 rounded-full blur-[150px] pointer-events-none z-0" />
+      <div className="fixed top-10 left-10 w-96 h-96 bg-violet-600/5 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="fixed bottom-1/3 left-1/3 w-[500px] h-[500px] bg-indigo-600/5 rounded-full blur-[140px] pointer-events-none z-0" />
 
       {/* Top Navigation Bar */}
       <Navbar />
@@ -135,11 +99,6 @@ export default function AboutPage() {
       <main className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 pt-8 pb-24 space-y-24">
         {/* Breadcrumb & Hero Banner */}
         <section className="text-center pt-8 max-w-4xl mx-auto space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/40 bg-purple-950/40 text-purple-300 text-xs font-mono tracking-wider uppercase shadow-[0_0_20px_rgba(168,85,247,0.25)]">
-            <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
-            <span>WHO WE ARE</span>
-          </div>
-
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
             Architecting the Future of{" "}
             <span className="bg-gradient-to-r from-purple-400 via-violet-300 to-indigo-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(168,85,247,0.5)]">
@@ -178,7 +137,7 @@ export default function AboutPage() {
                 Our Mission
               </h2>
               <p className="text-slate-300 leading-relaxed">
-                To build an extraordinary technical ecosystem where students master industry-grade skills, collaborate on high-impact projects, and participate in competitive hackathons. We bridge the gap between academic theory and cutting-edge industry software engineering.
+                To empower students to become not just skilled engineers, but engaged leaders, community builders and lifelong learners with respect for the society and knowledge.
               </p>
             </div>
             <div className="pt-4 border-t border-purple-900/40 flex items-center gap-2 text-xs font-mono text-purple-400">
@@ -196,7 +155,7 @@ export default function AboutPage() {
                 Our Vision
               </h2>
               <p className="text-slate-300 leading-relaxed">
-                To serve as a globally recognized hub for student innovation, producing forward-thinking technology leaders who solve real-world industrial and societal challenges through open-source software, artificial intelligence, and scalable systems.
+                To build an ecosystem where students learn, connect and grow socially, academically and culturally while bringing pride and recognition to the department.
               </p>
             </div>
             <div className="pt-4 border-t border-purple-900/40 flex items-center gap-2 text-xs font-mono text-violet-400">
@@ -246,9 +205,6 @@ export default function AboutPage() {
         {/* Core Pillars */}
         <section className="space-y-10">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-950/30 text-purple-300 text-xs font-mono uppercase">
-              CORE FOUNDATIONS
-            </div>
             <h2 className="text-3xl font-extrabold text-white">
               The Pillars of ACES Culture
             </h2>
@@ -290,9 +246,6 @@ export default function AboutPage() {
         {/* Timeline / Milestones */}
         <section id="milestones" className="space-y-12 scroll-mt-28">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-950/30 text-purple-300 text-xs font-mono uppercase">
-              LEGACY & EVOLUTION
-            </div>
             <h2 className="text-3xl font-extrabold text-white">
               Key Historical Milestones
             </h2>
@@ -303,7 +256,7 @@ export default function AboutPage() {
 
           <div className="relative max-w-4xl mx-auto before:absolute before:inset-0 before:left-1/2 before:-translate-x-1/2 before:w-0.5 before:bg-gradient-to-b before:from-purple-600/80 before:via-violet-500/40 before:to-transparent hidden sm:block">
             <div className="space-y-12">
-              {timeline.map((item, idx) => {
+              {milestones.map((item, idx) => {
                 const isEven = idx % 2 === 0;
                 return (
                   <div
@@ -318,21 +271,15 @@ export default function AboutPage() {
                           <span className="text-2xl font-extrabold text-purple-400 font-mono">
                             {item.year}
                           </span>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-purple-500/30 bg-purple-950/50 text-purple-300">
-                            {item.tag}
-                          </span>
                         </div>
-                        <h3 className="text-lg font-bold text-white">
-                          {item.title}
-                        </h3>
-                        <p className="text-xs text-slate-300 leading-relaxed">
-                          {item.description}
+                        <p className="text-sm font-medium text-slate-200 leading-relaxed">
+                          {item.milestone}
                         </p>
                       </SpotlightCard>
                     </div>
 
                     {/* Timeline Glowing Node */}
-                    <div className="absolute left-1/2 -translate-x-1/2 w-8 h-8 rounded-full border-2 border-purple-400 bg-[#06020c] flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.8)] z-10">
+                    <div className="absolute left-1/2 -translate-x-1/2 w-8 h-8 rounded-full border-2 border-purple-400 bg-black flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.8)] z-10">
                       <div className="w-2.5 h-2.5 rounded-full bg-purple-400 animate-ping" />
                     </div>
 
@@ -345,19 +292,15 @@ export default function AboutPage() {
 
           {/* Mobile Fallback Timeline */}
           <div className="sm:hidden space-y-6">
-            {timeline.map((item, idx) => (
+            {milestones.map((item, idx) => (
               <SpotlightCard key={idx} className="p-6 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-extrabold text-purple-400 font-mono">
                     {item.year}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-purple-500/30 bg-purple-950/50 text-purple-300">
-                    {item.tag}
-                  </span>
                 </div>
-                <h3 className="text-lg font-bold text-white">{item.title}</h3>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  {item.description}
+                <p className="text-sm font-medium text-slate-200 leading-relaxed">
+                  {item.milestone}
                 </p>
               </SpotlightCard>
             ))}

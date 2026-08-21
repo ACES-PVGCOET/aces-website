@@ -14,11 +14,8 @@ export interface NavItem {
 const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Sponsors", href: "/#sponsors" },
   { label: "Events", href: "/events" },
-  { label: "Projects", href: "/#projects" },
   { label: "Team", href: "/team" },
-  { label: "Contact", href: "/#contact" },
 ];
 
 export default function Navbar() {
@@ -42,7 +39,7 @@ export default function Navbar() {
     <header className="relative z-50 max-w-7xl mx-auto px-6 sm:px-10 h-24 flex items-center justify-between">
       {/* Brand Logo */}
       <Link href="/">
-        <Logo />
+        <Logo showText={false} iconClassName="h-8 sm:h-8 w-auto object-contain hover:scale-105 transition-transform" />
       </Link>
 
       {/* Center Nav Links (Desktop) */}
@@ -86,7 +83,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer / Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 top-24 z-40 bg-[#06020c]/95 backdrop-blur-xl md:hidden flex flex-col p-6 animate-in fade-in slide-in-from-top-4 duration-200">
+        <div className="fixed inset-0 top-24 z-40 bg-black/95 backdrop-blur-xl md:hidden flex flex-col p-6 animate-in fade-in slide-in-from-top-4 duration-200">
           <nav className="flex flex-col gap-6 text-lg font-medium text-slate-200">
             {navItems.map((item) => {
               const active = isItemActive(item.href);

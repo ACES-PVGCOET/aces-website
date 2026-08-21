@@ -519,15 +519,6 @@ export default function CyberGlobe() {
           return el;
         }}
       />
-
-      {/* Subtle drag hint */}
-      <div className="absolute bottom-4 z-20 pointer-events-none flex items-center justify-center">
-        <div className="px-4 py-1.5 rounded-full bg-purple-950/40 border border-purple-500/30 text-purple-200/70 font-sans text-xs tracking-widest flex items-center gap-2 backdrop-blur-md shadow-[0_0_18px_rgba(168,85,247,0.15)]">
-          <span className="text-purple-400">←</span>
-          <span>Drag to Rotate</span>
-          <span className="text-purple-400">→</span>
-        </div>
-      </div>
     </div>
   );
 }

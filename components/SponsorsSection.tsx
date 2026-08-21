@@ -45,11 +45,6 @@ export default function SponsorsSection() {
       <div className="max-w-7xl mx-auto px-6 sm:px-10 relative z-10">
         {/* Header Content */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-14">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/60 border border-purple-500/40 text-purple-300 text-xs font-mono tracking-widest uppercase shadow-[0_0_15px_rgba(168,85,247,0.2)]">
-            <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-            SPONSORS & PARTNERS
-          </div>
-
           <h2 className="text-3xl sm:text-5xl font-zen text-white tracking-tight leading-tight">
             Backed by Visionary Industry Leaders
           </h2>

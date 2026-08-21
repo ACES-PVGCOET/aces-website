@@ -34,6 +34,8 @@ export interface ApiEvent {
   description: string;
   terms: string;
   reg_form_id?: string;
+  reg_st_dt?: string | Date;
+  reg_end_dt?: string | Date;
   banner_url?: string;
   isHighlight?: boolean;
   auditing?: ApiEventAuditing;

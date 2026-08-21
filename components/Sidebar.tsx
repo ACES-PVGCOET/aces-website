@@ -1,5 +1,6 @@
 import React from "react";
 import { DiscordIcon, InstagramIcon, LinkedinIcon } from "@/components/SocialIcons";
+import { YoutubeIcon } from "lucide-react";
 
 export default function Sidebar() {
   return (
@@ -9,16 +10,16 @@ export default function Sidebar() {
         <div className="w-[1px] h-16 bg-gradient-to-b from-transparent via-slate-800 to-purple-500/40" />
 
         <a
-          href="#discord"
+          href="https://youtube.com/@acespvgcoet5962?si=M5KkrUZv2dNCc1No"
           className="hover:text-purple-400 transition-colors transform hover:scale-110"
           title="Discord"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <DiscordIcon className="w-4 h-4" />
+          <YoutubeIcon className="w-4 h-4" />
         </a>
         <a
-          href="#instagram"
+          href="https://www.instagram.com/acespvg?igsi=MWltbDhnODJ6N25hNg=="
           className="hover:text-purple-400 transition-colors transform hover:scale-110"
           title="Instagram"
           target="_blank"
@@ -27,7 +28,7 @@ export default function Sidebar() {
           <InstagramIcon className="w-4 h-4" />
         </a>
         <a
-          href="#linkedin"
+          href="https://in.linkedin.com/school/acespvg/"
           className="hover:text-purple-400 transition-colors transform hover:scale-110"
           title="LinkedIn"
           target="_blank"
@@ -38,15 +39,6 @@ export default function Sidebar() {
 
         <div className="w-[1px] h-16 bg-gradient-to-b from-purple-500/40 via-slate-800 to-transparent" />
       </aside>
-
-      {/* Bottom Left Scroll Down Guidance Indicator */}
-      <div className="fixed bottom-6 left-6 z-40 hidden xl:flex items-center gap-3 font-sans text-xs text-slate-400 pointer-events-none select-none">
-        <div className="flex items-center gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping" />
-          <div className="w-12 h-[1px] bg-purple-500/40" />
-        </div>
-        <span>Scroll Down</span>
-      </div>
     </>
   );
 }

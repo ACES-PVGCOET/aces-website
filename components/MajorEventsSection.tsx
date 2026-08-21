@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { ArrowRight, Calendar, MapPin, Sparkles, Trophy, Users, X, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Calendar, MapPin, Trophy, Users, X, CheckCircle2 } from "lucide-react";
 import SpotlightCard from "./SpotlightCard";
 import { getMajorEvents } from "@/lib/api/eventsApi";
 import { MajorEvent } from "@/lib/types/events";
@@ -44,11 +44,6 @@ export default function MajorEventsSection() {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/60 border border-purple-500/40 text-purple-300 text-xs font-mono tracking-widest uppercase shadow-[0_0_15px_rgba(168,85,247,0.2)]">
-            <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
-            FLAGSHIP INITIATIVES & EVENTS
-          </div>
-
           <h2 className="text-3xl sm:text-5xl font-zen text-white tracking-tight leading-tight">
             Major Events & Hackathons
           </h2>
@@ -96,7 +91,7 @@ export default function MajorEventsSection() {
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#06020c] via-transparent to-transparent opacity-90" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
 
                     {/* Badge Pill */}
                     {event.badgeText && (
