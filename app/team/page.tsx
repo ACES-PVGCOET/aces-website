@@ -13,6 +13,8 @@ import { Users, RefreshCw, AlertCircle } from "lucide-react";
 
 const TEAM_CATEGORIES: TeamCategory[] = [
   "All Teams",
+  "Leaders",
+  "Faculty",
   "Web Team",
   "Technical Team",
   "Event Team",
