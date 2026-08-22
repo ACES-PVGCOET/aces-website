@@ -38,7 +38,12 @@ export default function TeamPage() {
       setLoading(true);
       setError(null);
       const data = await getMembers(selectedCategory);
-      setMembers(data);
+      // Filter out members without a profile photo URL
+      const membersWithPhotos = data.filter(
+        (member) =>
+          Boolean(member.profile_photo_url && member.profile_photo_url.trim() !== "")
+      );
+      setMembers(membersWithPhotos);
     } catch (err: any) {
       console.error("Failed loading team members from API", err);
       setError(err?.message || "Failed to fetch member data from API server");

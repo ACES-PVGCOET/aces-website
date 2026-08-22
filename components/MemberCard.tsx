@@ -8,7 +8,7 @@ import {
   InstagramIcon,
   LinkedinIcon,
 } from "./SocialIcons";
-import { Mail, User } from "lucide-react";
+import { Mail } from "lucide-react";
 
 interface MemberCardProps {
   member: TeamMember;
@@ -17,38 +17,25 @@ interface MemberCardProps {
 export default function MemberCard({ member }: MemberCardProps) {
   const [imageError, setImageError] = useState(false);
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
-  };
+  // Don't display member if photo is not available or fails to load
+  if (
+    !member.profile_photo_url ||
+    !member.profile_photo_url.trim() ||
+    imageError
+  ) {
+    return null;
+  }
 
   return (
     <SpotlightCard className="p-0 flex flex-col h-full group transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_40px_-10px_rgba(168,85,247,0.4)] hover:border-purple-400/80 rounded-2xl overflow-hidden border border-purple-900/40 bg-purple-950/20 backdrop-blur-md">
       {/* Rectangular Big Image Container */}
       <div className="relative w-full aspect-[4/5] overflow-hidden bg-purple-950/40">
-        {member.profile_photo_url && !imageError ? (
-          <img
-            src={member.profile_photo_url}
-            alt={member.name}
-            className="w-full h-full object-cover object-center transform group-hover:scale-108 transition-transform duration-700 ease-out"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-purple-900/30 via-indigo-950/60 to-purple-950/90 text-white p-4">
-            <div className="w-16 h-16 rounded-full bg-purple-900/50 border border-purple-500/40 flex items-center justify-center mb-2 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
-              {member.name ? (
-                <span className="font-mono font-bold text-2xl text-purple-300">{getInitials(member.name)}</span>
-              ) : (
-                <User className="w-8 h-8 text-purple-400" />
-              )}
-            </div>
-            <span className="text-xs text-purple-300/60 font-mono">ACES Member</span>
-          </div>
-        )}
+        <img
+          src={member.profile_photo_url}
+          alt={member.name}
+          className="w-full h-full object-cover object-center transform group-hover:scale-108 transition-transform duration-700 ease-out"
+          onError={() => setImageError(true)}
+        />
 
         {/* Ambient Dark Gradient Bottom Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-70 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none" />
