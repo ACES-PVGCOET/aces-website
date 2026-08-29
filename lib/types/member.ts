@@ -17,7 +17,6 @@ export interface TeamMember {
 }
 
 export type TeamCategory =
-  | "All Teams"
   | "Leaders"
   | "Leaders Team"
   | "Faculty"
@@ -25,10 +24,9 @@ export type TeamCategory =
   | "Web Team"
   | "Technical Team"
   | "Event Team"
-  | "Media Team"
-  | "Marketing Team"
+  | "Media and Marketing Team"
   | "Editorial Team"
-  | "Treasury Team"
+  | "Treasury and Sponsorship Team"
   | "Design Team"
   | "Production Team";
 

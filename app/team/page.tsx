@@ -12,23 +12,21 @@ import { TeamCategory, TeamMember } from "@/lib/types/member";
 import { Users, RefreshCw, AlertCircle } from "lucide-react";
 
 const TEAM_CATEGORIES: TeamCategory[] = [
-  "All Teams",
-  "Leaders",
   "Faculty",
+  "Leaders",
   "Web Team",
   "Technical Team",
   "Event Team",
-  "Media Team",
-  "Marketing Team",
+  "Media and Marketing Team",
   "Editorial Team",
-  "Treasury Team",
+  "Treasury and Sponsorship Team",
   "Design Team",
   "Production Team",
 ];
 
 export default function TeamPage() {
   const [selectedCategory, setSelectedCategory] =
-    useState<TeamCategory>("All Teams");
+    useState<TeamCategory>("Leaders");
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

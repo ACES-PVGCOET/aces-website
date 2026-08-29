@@ -15,7 +15,7 @@ export const STATIC_MAGAZINES: MagazineItem[] = [
       "From thoughts to vision to reality, this is where the imagination and innovation combine! ACES proudly presents their yearly magazine, ACE THE TECH!! It is not just a magazine - it is your window into the committee, the department and the college. Designed by the Design and Production Team, refined by the Editorial Team and combined by the ACES committee together, it is a culmination of the committee’s innovation, ideas, creativity and achievements.",
     media_url: "/magazines/ACES_Magazine_2k25.pdf",
     cover_image:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80",
+      "/mag-covers/ACES_Mag_2025_Cover.png",
     collection_name: "Magazines",
     media_type: "pdf",
     created_at: "2025-04-15",
@@ -27,7 +27,7 @@ export const STATIC_MAGAZINES: MagazineItem[] = [
     description: "",
     media_url: "/magazines/ACES_Magazine_2024.pdf",
     cover_image:
-      "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=80",
+      "/mag-covers/ACES_Mag_2024_Cover.png",
     collection_name: "Magazines",
     media_type: "pdf",
     created_at: "2024-04-12",
@@ -39,7 +39,7 @@ export const STATIC_MAGAZINES: MagazineItem[] = [
     description: "",
     media_url: "/magazines/ACES_Magazine_2023.pdf",
     cover_image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80",
+      "/mag-covers/ACES_Mag_2023_Cover.png",
     collection_name: "Magazines",
     media_type: "pdf",
     created_at: "2023-04-08",
