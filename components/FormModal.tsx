@@ -408,10 +408,14 @@ export default function FormModal({
                         {q.is_required && <span className="text-red-400 font-bold ml-1">*</span>}
                       </label>
                       {/* Question Body Image (rendered if image_url is present) */}
-                      {q.image_url && (
+                                           {q.image_url && (
                         <div className="my-3 rounded-xl overflow-hidden border border-purple-900/50 bg-black/50 p-2 flex items-center justify-center">
                           <img
-                            src={q.image_url}
+                            src={
+                              form.form_id === "6a8875e5b3701104fe3b9965" && q.question_serial === 4
+                                ? "/logo.png"
+                                : q.image_url
+                            }
                             alt={`Illustration for question ${q.question_serial}`}
                             className="max-h-60 w-auto object-contain rounded-lg shadow-lg"
                           />
