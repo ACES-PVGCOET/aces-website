@@ -380,19 +380,33 @@ export default function FormModal({
                   const currentAns = prevAnswers(serialKey);
 
                   return (
+                    <React.Fragment key={q.question_serial}>
+                      {form.form_id === "6a8875e5b3701104fe3b9965" && q.question_serial === 4 && (
+                        <div className="p-5 rounded-2xl bg-slate-950/60 border border-purple-900/30 space-y-3">
+                          <label className="block text-xs sm:text-sm font-semibold leading-relaxed text-slate-200">
+                            <span className="text-purple-400 font-mono font-bold mr-1">Q4.</span>
+                            <span>Scan the following QR for Online Payment</span>
+                          </label>
+                          <div className="flex items-center justify-center">
+                            <img
+                              src="/payment-qr.jpeg"
+                              alt="Payment QR Code"
+                              className="w-48 h-48 object-contain rounded-xl border border-purple-900/50 bg-white p-2"
+                            />
+                          </div>
+                        </div>
+                      )}
                     <div
-                      key={q.question_serial}
                       className="p-5 rounded-2xl bg-slate-950/60 border border-purple-900/30 space-y-3 hover:border-purple-800/50 transition-colors"
                     >
                       {/* Question Header */}
                       <label className="block text-xs sm:text-sm font-semibold leading-relaxed text-slate-200">
                         <span className="text-purple-400 font-mono font-bold mr-1">
-                          Q{q.question_serial}.
+                          Q{form.form_id === "6a8875e5b3701104fe3b9965" && q.question_serial === 4 ? 5 : q.question_serial}.
                         </span>
                         <span>{q.question_statement}</span>
                         {q.is_required && <span className="text-red-400 font-bold ml-1">*</span>}
                       </label>
-
                       {/* Question Body Image (rendered if image_url is present) */}
                       {q.image_url && (
                         <div className="my-3 rounded-xl overflow-hidden border border-purple-900/50 bg-black/50 p-2 flex items-center justify-center">
@@ -528,7 +542,8 @@ export default function FormModal({
                         </div>
                       )}
                     </div>
-                  );
+                </React.Fragment>
+                      );
                 })}
             </div>
 
