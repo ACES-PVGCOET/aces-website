@@ -7,8 +7,19 @@ const getBaseUrl = () => {
 };
 
 export const STATIC_MAGAZINES: MagazineItem[] = [
-  {
-    id: "mag-2025",
+  
+   { id: "mag-2026",
+    title: "2026", 
+    publicationYear: 2026,
+    description: "Write a short description of this year's magazine here.", 
+    media_url: "/magazines/ACES_Magazine_2026.pdf", 
+    cover_image: "/mag-covers/ACES_MAG_2026_COVER",
+    collection_name: "Magazines",
+    media_type: "pdf",
+    created_at: "2026-04-15",
+   },
+  { 
+  id: "mag-2025",
     title: "2025",
     publicationYear: 2025,
     description:
