@@ -13,7 +13,7 @@ export const STATIC_MAGAZINES: MagazineItem[] = [
     publicationYear: 2026,
     description: "Write a short description of this year's magazine here.", 
     media_url: "/magazines/ACES_Magazine_2026.pdf", 
-    cover_image: "/mag-covers/ACES_MAG_2026_COVER",
+    cover_image: "/mag-covers/ACES_MAG_2026_COVER.png",
     collection_name: "Magazines",
     media_type: "pdf",
     created_at: "2026-04-15",
