@@ -170,7 +170,7 @@ export default function Footer() {
           <p className="flex items-center gap-1.5 font-medium">
             <span>Designed & Built with</span>
             <span className="text-purple-400 inline-block animate-pulse">💜</span>
-            <span>by ACES Tech Team</span>
+            <span>by ACES Team</span>
           </p>
 
           <button
