@@ -379,49 +379,30 @@ export default function FormModal({
                   const serialKey = String(q.question_serial);
                   const currentAns = prevAnswers(serialKey);
 
-                  return (
-                    <React.Fragment key={q.question_serial}>
-                      {form.form_id === "6a8875e5b3701104fe3b9965" && q.question_serial === 4 && (
-                        <div className="p-5 rounded-2xl bg-slate-950/60 border border-purple-900/30 space-y-3">
-                          <label className="block text-xs sm:text-sm font-semibold leading-relaxed text-slate-200">
-                            <span className="text-purple-400 font-mono font-bold mr-1">Q4.</span>
-                            <span>Scan the following QR for Online Payment</span>
-                          </label>
-                          <div className="flex items-center justify-center">
-                            <img
-                              src="/payment-qr.jpeg"
-                              alt="Payment QR Code"
-                              className="w-48 h-48 object-contain rounded-xl border border-purple-900/50 bg-white p-2"
-                            />
-                          </div>
-                        </div>
-                      )}
+                                   return (
                     <div
+                      key={q.question_serial}
                       className="p-5 rounded-2xl bg-slate-950/60 border border-purple-900/30 space-y-3 hover:border-purple-800/50 transition-colors"
                     >
                       {/* Question Header */}
                       <label className="block text-xs sm:text-sm font-semibold leading-relaxed text-slate-200">
                         <span className="text-purple-400 font-mono font-bold mr-1">
-                          Q{form.form_id === "6a8875e5b3701104fe3b9965" && q.question_serial === 4 ? 5 : q.question_serial}.
+                          Q{q.question_serial}.
                         </span>
                         <span>{q.question_statement}</span>
                         {q.is_required && <span className="text-red-400 font-bold ml-1">*</span>}
                       </label>
+
                       {/* Question Body Image (rendered if image_url is present) */}
-                                           {q.image_url && (
+                      {q.image_url && (
                         <div className="my-3 rounded-xl overflow-hidden border border-purple-900/50 bg-black/50 p-2 flex items-center justify-center">
                           <img
-                            src={
-                              form.form_id === "6a8875e5b3701104fe3b9965" && q.question_serial === 4
-                                ? "/logo.png"
-                                : q.image_url
-                            }
+                            src={q.image_url}
                             alt={`Illustration for question ${q.question_serial}`}
                             className="max-h-60 w-auto object-contain rounded-lg shadow-lg"
                           />
                         </div>
                       )}
-
                       {/* TEXTUAL INPUT */}
                       {q.question_type === "textual" && (
                         <div>
@@ -546,7 +527,6 @@ export default function FormModal({
                         </div>
                       )}
                     </div>
-                </React.Fragment>
                       );
                 })}
             </div>
