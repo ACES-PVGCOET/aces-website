@@ -1,18 +1,24 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Globe, { GlobeMethods } from "react-globe.gl";
 import * as THREE from "three";
 
 // 1. Major Global Cyber Hub Nodes (22 Key Worldwide Terminal Locations)
+// Four of these double as navigation hotspots: they carry an optional
+// `page` (route to open) and `label` (tooltip text) field. Hovering shows
+// the label in a tooltip; clicking routes to that page. To change which
+// city maps to which section, just move the `page`/`label` fields to a
+// different entry below — nothing else needs to change.
 const HUB_LOCATIONS = [
   { name: "San Francisco", lat: 37.7749, lng: -122.4194 },
   { name: "Los Angeles", lat: 34.0522, lng: -118.2437 },
   { name: "Seattle", lat: 47.6062, lng: -122.3321 },
-  { name: "New York", lat: 40.7128, lng: -74.0060 },
+  { name: "New York", lat: 40.7128, lng: -74.0060, page: "/about", label: "About" },
   { name: "Toronto", lat: 43.6532, lng: -79.3832 },
   { name: "Sao Paulo", lat: -23.5505, lng: -46.6333 },
-  { name: "London", lat: 51.5074, lng: -0.1278 },
+  { name: "London", lat: 51.5074, lng: -0.1278, page: "/team", label: "Team" },
   { name: "Paris", lat: 48.8566, lng: 2.3522 },
   { name: "Frankfurt", lat: 50.1109, lng: 8.6821 },
   { name: "Amsterdam", lat: 52.3676, lng: 4.9041 },
@@ -20,10 +26,10 @@ const HUB_LOCATIONS = [
   { name: "Nairobi", lat: -1.2921, lng: 36.8219 },
   { name: "Johannesburg", lat: -26.2041, lng: 28.0473 },
   { name: "Cape Town", lat: -33.9249, lng: 18.4241 },
-  { name: "Dubai", lat: 25.2048, lng: 55.2708 },
+  { name: "Dubai", lat: 25.2048, lng: 55.2708, page: "/events", label: "Events" },
   { name: "Mumbai", lat: 19.0760, lng: 72.8777 },
   { name: "New Delhi", lat: 28.6139, lng: 77.2090 },
-  { name: "Singapore", lat: 1.3521, lng: 103.8198 },
+  { name: "Singapore", lat: 1.3521, lng: 103.8198, page: "/publications", label: "Publications" },
   { name: "Hong Kong", lat: 22.3193, lng: 114.1694 },
   { name: "Tokyo", lat: 35.6762, lng: 139.6503 },
   { name: "Seoul", lat: 37.5665, lng: 126.9780 },
@@ -118,6 +124,7 @@ function getCartesianCoords(lat: number, lng: number, alt: number = 0.006, radiu
 }
 
 export default function CyberGlobe() {
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<GlobeMethods | undefined>(undefined);
   const animFrameRef = useRef<number>(0);
@@ -470,7 +477,9 @@ export default function CyberGlobe() {
         htmlLat={(d: any) => d.lat}
         htmlLng={(d: any) => d.lng}
         htmlAltitude={0.042}
-        htmlElement={() => {
+        htmlElement={(d: any) => {
+          const isNav = Boolean(d?.page);
+
           const el = document.createElement("div");
           el.style.cssText = [
             "position:relative",
@@ -480,7 +489,8 @@ export default function CyberGlobe() {
             "align-items:center",
             "justify-content:center",
             "transform:translate(-50%,-50%)",
-            "pointer-events:none",
+            isNav ? "pointer-events:auto" : "pointer-events:none",
+            isNav ? "cursor:pointer" : "",
           ].join(";");
 
           el.innerHTML = `
@@ -509,19 +519,81 @@ export default function CyberGlobe() {
               background:linear-gradient(to right,transparent,rgba(255,255,255,0.65),transparent);
               border-radius:1px;transform:rotate(45deg);"></div>
             <!-- Bright white core -->
-            <div style="width:5px;height:5px;border-radius:50%;background:white;z-index:10;
+            <div class="cyber-globe-core" style="width:5px;height:5px;border-radius:50%;background:white;z-index:10;
+              transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
               box-shadow:
                 0 0 5px 2px rgba(255,255,255,0.95),
                 0 0 14px 5px rgba(216,180,254,0.85),
                 0 0 28px 10px rgba(168,85,247,0.55),
                 0 0 50px 16px rgba(139,92,246,0.30);"></div>
+            ${
+              isNav
+                ? `
+            <!-- Hover tooltip: section name + navigation cue -->
+            <div class="cyber-globe-tooltip" style="position:absolute;bottom:30px;left:50%;
+              transform:translate(-50%,4px);white-space:nowrap;z-index:20;
+              padding:5px 13px;border-radius:9999px;
+              background:rgba(59,7,100,0.88);
+              border:1px solid rgba(168,85,247,0.8);
+              color:#f5f3ff;font-family:inherit;font-size:11px;font-weight:600;
+              letter-spacing:0.03em;
+              box-shadow:0 0 22px rgba(168,85,247,0.5);
+              opacity:0;transition:opacity 0.22s ease,transform 0.22s ease;">
+              ${d.label}
+              <div style="position:absolute;bottom:-4px;left:50%;width:8px;height:8px;
+                transform:translateX(-50%) rotate(45deg);
+                background:rgba(59,7,100,0.88);
+                border-right:1px solid rgba(168,85,247,0.8);
+                border-bottom:1px solid rgba(168,85,247,0.8);"></div>
+            </div>`
+                : ""
+            }
           `;
+
+          if (isNav) {
+            const tooltip = el.querySelector(".cyber-globe-tooltip") as HTMLElement | null;
+            const core = el.querySelector(".cyber-globe-core") as HTMLElement | null;
+
+            const showHover = () => {
+              if (tooltip) {
+                tooltip.style.opacity = "1";
+                tooltip.style.transform = "translate(-50%,0px)";
+              }
+              if (core) core.style.transform = "scale(1.4)";
+            };
+            const hideHover = () => {
+              if (tooltip) {
+                tooltip.style.opacity = "0";
+                tooltip.style.transform = "translate(-50%,4px)";
+              }
+              if (core) core.style.transform = "scale(1)";
+            };
+            const goToPage = () => router.push(d.page);
+
+            el.addEventListener("mouseenter", showHover);
+            el.addEventListener("mouseleave", hideHover);
+            el.addEventListener("click", (e: MouseEvent) => {
+              e.stopPropagation();
+              goToPage();
+            });
+
+            // Keyboard accessibility
+            el.tabIndex = 0;
+            el.setAttribute("role", "link");
+            el.setAttribute("aria-label", `Go to ${d.label} page`);
+            el.addEventListener("focus", showHover);
+            el.addEventListener("blur", hideHover);
+            el.addEventListener("keydown", (e: KeyboardEvent) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                goToPage();
+              }
+            });
+          }
+
           return el;
         }}
       />
     </div>
   );
 }
-
-
-
