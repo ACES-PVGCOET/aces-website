@@ -14,6 +14,10 @@ import {
   FileCheck,
   Loader2,
   FileText,
+  CreditCard,
+  QrCode,
+  ExternalLink,
+  Image as ImageIcon,
 } from "lucide-react";
 
 interface FormModalProps {
@@ -166,6 +170,40 @@ export default function FormModal({
     } catch (err: any) {
       console.error('[FormModal] File upload error:', err);
       setErrorMsg(err.message || 'File upload failed. Please try again.');
+    } finally {
+      setUploadingFiles((prev) => ({ ...prev, [serialKey]: false }));
+    }
+  };
+
+  // Payment Screenshot Upload Handler
+  const handlePaymentScreenshotUpload = async (serial: number, file?: File) => {
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      setErrorMsg(`Screenshot "${file.name}" exceeds maximum allowed limit of 10MB.`);
+      return;
+    }
+
+    const ext = file.name.includes('.') ? file.name.split('.').pop()?.toLowerCase() || '' : '';
+    const allowed = ['png', 'jpg', 'jpeg', 'webp', 'pdf'];
+    if (!allowed.includes(ext)) {
+      setErrorMsg(`Payment screenshot must be an image or document (allowed: ${allowed.join(', ')}).`);
+      return;
+    }
+
+    const serialKey = String(serial);
+    try {
+      setErrorMsg('');
+      setUploadingFiles((prev) => ({ ...prev, [serialKey]: true }));
+      const uploadRes = await uploadFormFile(file);
+
+      setAnswersMap((prev) => ({
+        ...prev,
+        [serialKey]: [uploadRes.url],
+      }));
+    } catch (err: any) {
+      console.error('[FormModal] Payment screenshot upload error:', err);
+      setErrorMsg(err.message || 'Payment screenshot upload failed. Please try again.');
     } finally {
       setUploadingFiles((prev) => ({ ...prev, [serialKey]: false }));
     }
@@ -524,6 +562,146 @@ export default function FormModal({
                               />
                             </label>
                           )}
+                        </div>
+                      )}
+
+                      {/* PAYMENT ACCEPTANCE INPUT */}
+                      {q.question_type === "payment_acceptance" && (
+                        <div className="space-y-4">
+                          {/* Payment Amount Card */}
+                          <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/40 via-indigo-950/40 to-emerald-950/40 border border-purple-500/40 flex items-center justify-between shadow-[0_0_25px_rgba(168,85,247,0.15)]">
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center justify-center font-bold">
+                                <CreditCard className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <p className="text-xs font-mono font-bold text-purple-300">Amount Due</p>
+                                <p className="text-[10px] text-slate-400">Scan QR and transfer the exact fee</p>
+                              </div>
+                            </div>
+                            <span className="text-xl font-mono font-extrabold text-emerald-400 tracking-tight">
+                              ₹{q.payment_policy?.amount || 0}
+                            </span>
+                          </div>
+
+                          {/* QR Codes Grid */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {/* Primary QR */}
+                            {q.payment_policy?.primary_qr_url && (
+                              <div className="p-4 rounded-2xl bg-slate-950/80 border border-emerald-500/40 text-center space-y-2.5 shadow-lg">
+                                <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold tracking-wider uppercase border border-emerald-500/30">
+                                  Primary QR Code
+                                </span>
+                                <div className="w-40 h-40 mx-auto rounded-xl bg-white p-2.5 flex items-center justify-center shadow-md">
+                                  <img
+                                    src={q.payment_policy.primary_qr_url}
+                                    alt="Primary Payment QR"
+                                    className="w-full h-full object-contain"
+                                  />
+                                </div>
+                                <a
+                                  href={q.payment_policy.primary_qr_url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-[11px] font-mono text-purple-300 hover:text-purple-200 underline"
+                                >
+                                  <span>View High-Res QR</span>
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </div>
+                            )}
+
+                            {/* Fallback QR */}
+                            {q.payment_policy?.fallback_qr_url && (
+                              <div className="p-4 rounded-2xl bg-slate-950/80 border border-amber-500/40 text-center space-y-2.5 shadow-lg">
+                                <span className="inline-block px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold tracking-wider uppercase border border-amber-500/30">
+                                  Secondary / Fallback QR
+                                </span>
+                                <div className="w-40 h-40 mx-auto rounded-xl bg-white p-2.5 flex items-center justify-center shadow-md">
+                                  <img
+                                    src={q.payment_policy.fallback_qr_url}
+                                    alt="Fallback Payment QR"
+                                    className="w-full h-full object-contain"
+                                  />
+                                </div>
+                                <a
+                                  href={q.payment_policy.fallback_qr_url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-[11px] font-mono text-amber-300 hover:text-amber-200 underline"
+                                >
+                                  <span>View High-Res QR</span>
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Screenshot Upload Zone */}
+                          <div className="space-y-2 pt-1">
+                            <label className="block text-xs font-semibold text-slate-200 flex items-center justify-between">
+                              <span className="flex items-center gap-1.5">
+                                <ImageIcon className="w-4 h-4 text-purple-400" />
+                                <span>Upload Payment Screenshot</span>
+                                {q.is_required && <span className="text-red-400 font-bold ml-0.5">*</span>}
+                              </span>
+                              <span className="text-[10px] font-mono text-purple-300/70">PNG, JPG, WEBP, PDF (Max 10MB)</span>
+                            </label>
+
+                            {currentAns[0] ? (
+                              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between text-xs font-mono text-emerald-300">
+                                <div className="flex items-center gap-2 truncate pr-2">
+                                  <FileCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                                  <span className="truncate">{currentAns[0]}</span>
+                                </div>
+                                <div className="flex items-center gap-3 shrink-0">
+                                  <label className="text-[11px] text-purple-300 hover:text-white font-bold cursor-pointer hover:underline">
+                                    <span>Replace</span>
+                                    <input
+                                      type="file"
+                                      accept="image/*,application/pdf"
+                                      disabled={!form.is_active || uploadingFiles[serialKey]}
+                                      onChange={(e) => handlePaymentScreenshotUpload(q.question_serial, e.target.files?.[0])}
+                                      className="hidden"
+                                    />
+                                  </label>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleTextChange(q.question_serial, "")}
+                                    className="text-[11px] text-red-400 hover:text-red-300 font-bold hover:underline cursor-pointer"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <label className="p-5 border-2 border-dashed border-purple-900/60 hover:border-purple-500/60 bg-black/40 hover:bg-purple-950/20 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer transition-all">
+                                {uploadingFiles[serialKey] ? (
+                                  <div className="flex items-center gap-2 text-purple-300 py-1">
+                                    <Loader2 className="w-5 h-5 animate-spin text-purple-400" />
+                                    <span className="text-xs font-mono font-semibold">Uploading payment screenshot...</span>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <UploadCloud className="w-7 h-7 mb-1.5 text-purple-400" />
+                                    <span className="text-xs font-semibold text-slate-200">
+                                      Click or drop to upload payment confirmation screenshot
+                                    </span>
+                                    <span className="text-[10px] font-mono text-purple-300/70 mt-1">
+                                      Attach screenshot showing transaction ID and transfer confirmation
+                                    </span>
+                                  </>
+                                )}
+                                <input
+                                  type="file"
+                                  accept="image/*,application/pdf"
+                                  disabled={!form.is_active || uploadingFiles[serialKey]}
+                                  onChange={(e) => handlePaymentScreenshotUpload(q.question_serial, e.target.files?.[0])}
+                                  className="hidden"
+                                />
+                              </label>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
