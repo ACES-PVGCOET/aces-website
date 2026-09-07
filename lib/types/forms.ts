@@ -1,4 +1,4 @@
-export type QuestionType = 'textual' | 'multiple_choice' | 'file';
+export type QuestionType = 'textual' | 'multiple_choice' | 'file' | 'payment_acceptance';
 
 export interface TextualPolicy {
   max_len: number;
@@ -14,6 +14,12 @@ export interface FilePolicy {
   max_size_mb: number;
 }
 
+export interface PaymentPolicy {
+  amount: number;
+  primary_qr_url: string;
+  fallback_qr_url?: string;
+}
+
 export interface FormQuestion {
   question_id?: string;
   question_serial: number;
@@ -24,6 +30,7 @@ export interface FormQuestion {
   textual_policy?: TextualPolicy;
   multiple_choice_policy?: MultipleChoicePolicy;
   file_policy?: FilePolicy;
+  payment_policy?: PaymentPolicy;
 }
 
 export interface FormDetail {

@@ -2,14 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import NeuralNetworkBackground from "@/components/NeuralNetworkBackground";
-import FormModal from "@/components/FormModal";
+import DynamicFormRenderer from "@/components/DynamicFormRenderer";
 import { getFormById } from "@/lib/api/formsApi";
 import { FormDetail } from "@/lib/types/forms";
-import { Loader2, AlertCircle, ArrowLeft, FileText } from "lucide-react";
+import { Loader2, AlertCircle, ArrowLeft, RefreshCw } from "lucide-react";
 
 export default function SingleFormPage() {
   const params = useParams();
@@ -19,9 +20,8 @@ export default function SingleFormPage() {
   const [form, setForm] = useState<FormDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(true);
 
-  useEffect(() => {
+  const fetchForm = () => {
     if (!formId) return;
 
     setLoading(true);
@@ -37,6 +37,10 @@ export default function SingleFormPage() {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchForm();
   }, [formId]);
 
   return (
@@ -45,62 +49,63 @@ export default function SingleFormPage() {
 
       <Navbar />
 
-      <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-32 pb-20">
-        <button
-          onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-xs font-mono text-purple-300 hover:text-white mb-6 px-3 py-1.5 rounded-lg bg-purple-950/40 border border-purple-900/40 hover:bg-purple-900/60 transition-all cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back</span>
-        </button>
+      <main className="relative z-10 w-full flex-1 pt-28 sm:pt-32 pb-20 px-4 sm:px-6">
+        {/* Navigation */}
+        <div className="max-w-2xl mx-auto mb-6 flex items-center justify-between">
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 text-xs font-mono text-purple-300 hover:text-white px-3 py-1.5 rounded-lg bg-purple-950/40 border border-purple-900/50 hover:bg-purple-900/60 transition-all cursor-pointer"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back</span>
+          </button>
+        </div>
 
-        {loading ? (
-          <div className="p-16 rounded-3xl bg-purple-950/20 border border-purple-900/30 flex flex-col items-center justify-center text-center space-y-4">
-            <Loader2 className="w-10 h-10 text-purple-400 animate-spin" />
-            <p className="text-sm font-mono text-purple-300">Loading Dynamic Form Spec...</p>
-          </div>
-        ) : error ? (
-          <div className="p-12 rounded-3xl bg-red-950/20 border border-red-900/40 text-center space-y-4">
-            <AlertCircle className="w-12 h-12 text-red-400 mx-auto" />
-            <h2 className="text-xl font-bold text-red-300">Form Not Available</h2>
-            <p className="text-xs text-slate-300 max-w-md mx-auto">{error}</p>
-          </div>
-        ) : form ? (
-          <div className="p-8 sm:p-12 rounded-3xl bg-[#0c0418] border border-purple-500/30 shadow-[0_0_50px_rgba(168,85,247,0.25)] space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-500/30 text-purple-300 flex items-center justify-center font-bold">
-                <FileText className="w-6 h-6" />
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-white">{form.title}</h1>
-                <p className="text-xs font-mono text-purple-300/80">Form ID: {form.form_id}</p>
-              </div>
+        {/* LOADING STATE */}
+        {loading && (
+          <div className="max-w-4xl mx-auto p-12 sm:p-20 rounded-3xl bg-[#0c0418]/80 border border-purple-900/30 backdrop-blur-xl flex flex-col items-center justify-center text-center space-y-4 shadow-2xl">
+            <div className="relative w-16 h-16 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-2 border-purple-500/20 animate-ping" />
+              <Loader2 className="w-8 h-8 text-purple-400 animate-spin" />
             </div>
+            <div className="space-y-1">
+              <p className="text-sm font-bold text-white">Loading Form Specification...</p>
+              <p className="text-xs font-mono text-purple-300/80">Fetching verified dynamic form schema</p>
+            </div>
+          </div>
+        )}
 
-            {form.description && (
-              <p className="text-sm text-slate-300 leading-relaxed font-light border-b border-purple-900/40 pb-6">
-                {form.description}
-              </p>
-            )}
-
-            <div className="pt-2">
+        {/* ERROR STATE */}
+        {!loading && error && (
+          <div className="max-w-xl mx-auto p-8 sm:p-12 rounded-3xl bg-red-950/20 border border-red-900/40 backdrop-blur-xl text-center space-y-5 shadow-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-red-500/20 border border-red-500/30 text-red-400 mx-auto flex items-center justify-center">
+              <AlertCircle className="w-8 h-8" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-red-300">Form Not Found or Unavailable</h2>
+              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">{error}</p>
+            </div>
+            <div className="flex items-center justify-center gap-3 pt-2">
               <button
-                onClick={() => setIsModalOpen(true)}
-                className="px-8 py-3.5 rounded-xl border border-purple-500/50 bg-purple-600 hover:bg-purple-500 text-white font-mono font-bold text-xs tracking-wider uppercase shadow-[0_0_25px_rgba(168,85,247,0.6)] transition-all cursor-pointer"
+                onClick={fetchForm}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-900/40 border border-red-500/30 hover:bg-red-900/60 text-xs font-mono font-bold text-white transition-all cursor-pointer"
               >
-                Open Form Engine Modal
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Retry</span>
               </button>
+              <Link
+                href="/forms"
+                className="px-5 py-2.5 rounded-xl bg-purple-900/40 border border-purple-500/30 hover:bg-purple-900/60 text-xs font-mono font-bold text-white transition-all"
+              >
+                Browse All Forms
+              </Link>
             </div>
           </div>
-        ) : null}
+        )}
 
-        {/* Embedded Form Modal */}
-        {form && (
-          <FormModal
-            initialForm={form}
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          />
+        {/* NATIVE FULL SCREEN FORM RENDERER */}
+        {!loading && !error && form && (
+          <DynamicFormRenderer form={form} mode="page" />
         )}
       </main>
 
