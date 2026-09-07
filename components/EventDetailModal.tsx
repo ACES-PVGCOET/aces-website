@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { ApiEvent } from "@/lib/types/events";
-import FormModal from "@/components/FormModal";
 import {
   X,
   Sparkles,
@@ -24,7 +24,6 @@ export default function EventDetailModal({
   onClose,
 }: EventDetailModalProps) {
   const [imageError, setImageError] = useState(false);
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
 
   if (!event) return null;
 
@@ -149,13 +148,13 @@ export default function EventDetailModal({
             </button>
 
             {event.reg_form_id ? (
-              <button
-                onClick={() => setIsFormModalOpen(true)}
-                className="px-6 py-2.5 rounded-xl border border-purple-500/50 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs tracking-wider uppercase flex items-center gap-2 shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all cursor-pointer"
+              <Link
+                href={`/forms/${event.reg_form_id}`}
+                className="px-6 py-2.5 rounded-xl border border-purple-500/50 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs tracking-wider uppercase flex items-center gap-2 shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all"
               >
                 <span>Register Now</span>
                 <ArrowUpRight className="w-4 h-4" />
-              </button>
+              </Link>
             ) : (
               <span className="text-xs font-mono text-slate-400">
                 Registration Info Available Soon
@@ -165,15 +164,6 @@ export default function EventDetailModal({
 
         </div>
       </div>
-
-      {/* Dynamic Form Engine Modal */}
-      {event.reg_form_id && (
-        <FormModal
-          formId={event.reg_form_id}
-          isOpen={isFormModalOpen}
-          onClose={() => setIsFormModalOpen(false)}
-        />
-      )}
     </>
   );
 }

@@ -42,7 +42,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="relative z-50 max-w-7xl mx-auto px-6 sm:px-10 h-24 flex items-center justify-between">
+      <header className="relative z-50 w-full max-w-7xl mx-auto px-6 sm:px-10 h-24 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/">
           <Logo showText={false} iconClassName="h-8 sm:h-8 w-auto object-contain hover:scale-105 transition-transform" />
