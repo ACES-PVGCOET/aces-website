@@ -8,9 +8,51 @@ import AnnouncementWidget from "@/components/AnnouncementWidget";
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://acespvg.in"),
-  title: "ACES",
-  description: "Next-generation high-tech cyber mesh landing page for Association of Computer Engineering Students.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://acespvgcoet.in"),
+  title: {
+    default: "ACES - Association of Computer Engineering Students | PVGCOET",
+    template: "%s | ACES PVGCOET",
+  },
+  description: "Official portal of the Association of Computer Engineering Students (ACES) at PVG's COET & GKPIM, Pune. Discover tech events, hackathons, workshops, student council, and publications.",
+  keywords: [
+    "ACES",
+    "ACES PVGCOET",
+    "Association of Computer Engineering Students",
+    "PVG COET Pune",
+    "Computer Engineering",
+    "Tech Events",
+    "Hackathons",
+    "Student Council",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "ACES - Association of Computer Engineering Students | PVGCOET",
+    description: "Official portal of the Association of Computer Engineering Students (ACES) at PVG's COET & GKPIM, Pune. Discover tech events, hackathons, workshops, student council, and publications.",
+    url: "/",
+    siteName: "ACES PVGCOET",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "ACES PVGCOET Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ACES - Association of Computer Engineering Students | PVGCOET",
+    description: "Official portal of the Association of Computer Engineering Students (ACES) at PVG's COET & GKPIM, Pune. Discover tech events, hackathons, workshops, student council, and publications.",
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
