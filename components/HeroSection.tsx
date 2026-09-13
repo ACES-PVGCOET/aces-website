@@ -7,6 +7,8 @@ import { ArrowRight } from "lucide-react";
 import CyberGlobeSkeleton from "@/components/CyberGlobeSkeleton";
 import Particles from "./Particles";
 
+import CrescentC from "@/components/CrescentC";
+
 // Dynamic import with ssr: false for WebGL 3D Globe
 const CyberGlobe = dynamic(() => import("@/components/CyberGlobe"), {
   ssr: false,
@@ -27,8 +29,14 @@ export default function HeroSection() {
           </div>
 
           {/* Giant Title */}
-          <h1 className="font-zen text-7xl sm:text-8xl lg:text-9xl tracking-tight leading-none text-transparent bg-gradient-to-r from-purple-100 via-purple-300 to-purple-500 bg-clip-text drop-shadow-[0_0_45px_rgba(168,85,247,0.65)]">
-            ACES
+          <h1 className="font-zen text-7xl sm:text-8xl lg:text-9xl tracking-tight leading-none flex items-center select-none drop-shadow-[0_0_45px_rgba(168,85,247,0.65)]">
+            <span className="text-transparent bg-gradient-to-r from-purple-100 to-purple-200 bg-clip-text">
+              A
+            </span>
+            <CrescentC className="w-[1.08em] h-[1.05em] ml-[-0.02em] mr-[0.02em] flex-shrink-0" />
+            <span className="text-transparent bg-gradient-to-r from-purple-300 to-purple-500 bg-clip-text">
+              ES
+            </span>
           </h1>
 
           {/* Sub-headline */}
