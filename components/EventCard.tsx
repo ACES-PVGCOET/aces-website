@@ -23,7 +23,7 @@ export default function EventCard({ event, onSelect }: EventCardProps) {
             <img
               src={event.banner_url}
               alt={event.overview}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
               onError={() => setImageError(true)}
             />
           ) : (

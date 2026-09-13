@@ -89,7 +89,7 @@ export default function MajorEventsSection() {
                       src={event.image}
                       alt={event.title}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
 
@@ -169,7 +169,7 @@ export default function MajorEventsSection() {
                   src={selectedEvent.image}
                   alt={selectedEvent.title}
                   fill
-                  className="object-cover"
+                  className="object-cover object-top"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0d061a] via-transparent to-transparent opacity-80" />
                 <div className="absolute bottom-4 left-4 right-4">
