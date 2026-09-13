@@ -30,7 +30,7 @@ async function getActiveForms(): Promise<ActiveFormSummary[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://acespvg.in").replace(/\/$/, "");
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://acespvgcoet.in").replace(/\/$/, "");
   const currentDate = new Date();
 
   // Core static routes for ACES web portal
