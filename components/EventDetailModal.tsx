@@ -62,7 +62,7 @@ export default function EventDetailModal({
               <img
                 src={event.banner_url}
                 alt={event.overview}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-top"
                 onError={() => setImageError(true)}
               />
             ) : (
