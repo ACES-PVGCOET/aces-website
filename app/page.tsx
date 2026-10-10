@@ -8,6 +8,7 @@ import ClickSpark from "@/components/ClickSpark";
 import SponsorsSection from "@/components/SponsorsSection";
 import MajorEventsSection from "@/components/MajorEventsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import NavratriOverlay from "@/components/NavratriOverlay";
 
 export default function Home() {
   return (
@@ -43,6 +44,9 @@ export default function Home() {
 
       {/* Sidebars (Social Links & Scroll Guidance) */}
       <Sidebar />
+
+      {/* Navratri Festive Video Overlay */}
+      <NavratriOverlay />
 
       {/* Footer Section */}
       <Footer />
