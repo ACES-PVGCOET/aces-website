@@ -6,6 +6,9 @@ import dynamic from "next/dynamic";
 import { ArrowRight } from "lucide-react";
 import CyberGlobeSkeleton from "@/components/CyberGlobeSkeleton";
 import Particles from "./Particles";
+import AcesNavratriLogo from "@/components/Acesnavratrilogo";
+
+const SHOW_NAVRATRI = true; // set to false after Navratri
 
 // Dynamic import with ssr: false for WebGL 3D Globe
 const CyberGlobe = dynamic(() => import("@/components/CyberGlobe"), {
@@ -27,9 +30,17 @@ export default function HeroSection() {
           </div>
 
           {/* Giant Title */}
-          <h1 className="font-zen text-7xl sm:text-8xl lg:text-9xl tracking-tight leading-none text-transparent bg-gradient-to-r from-purple-100 via-purple-300 to-purple-500 bg-clip-text drop-shadow-[0_0_45px_rgba(168,85,247,0.65)]">
-            ACES
-          </h1>
+         {/* Giant Title */}
+{SHOW_NAVRATRI ? (
+  <>
+    <h1 className="sr-only">ACES</h1>
+    <AcesNavratriLogo className="w-full max-w-[420px] sm:max-w-[520px] lg:w-[30vw] lg:max-w-[580px] -ml-6 lg:-ml-24 relative z-20" />
+  </>
+) : (
+  <h1 className="font-zen text-7xl sm:text-8xl lg:text-9xl tracking-tight leading-none text-transparent bg-gradient-to-r from-purple-100 via-purple-300 to-purple-500 bg-clip-text drop-shadow-[0_0_45px_rgba(168,85,247,0.65)]">
+    ACES
+  </h1>
+)}
 
           {/* Sub-headline */}
           <h2 className="text-xl sm:text-2xl font-light text-slate-200 tracking-wide">
