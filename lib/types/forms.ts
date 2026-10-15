@@ -38,6 +38,8 @@ export interface FormDetail {
   title: string;
   description?: string;
   is_active: boolean;
+  whatsapp_group_link?: string;
+  whatsapp_qr_code?: string;
   questions: FormQuestion[];
   created_at?: string;
   updated_at?: string;
