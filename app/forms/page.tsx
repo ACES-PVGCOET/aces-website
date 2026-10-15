@@ -1,19 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import NeuralNetworkBackground from "@/components/NeuralNetworkBackground";
-import FormModal from "@/components/FormModal";
 import { getAllForms } from "@/lib/api/formsApi";
 import { FormListItem } from "@/lib/types/forms";
-import { Loader2, FileText, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
+import { Loader2, FileText, ArrowRight } from "lucide-react";
 
 export default function FormsPage() {
   const [forms, setForms] = useState<FormListItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -90,25 +89,18 @@ export default function FormsPage() {
 
                 <div className="pt-4 border-t border-purple-900/40 flex items-center justify-between text-xs font-mono">
                   <span className="text-purple-300/80">{item.question_count} Questions</span>
-                  <button
-                    onClick={() => setSelectedFormId(item.form_id)}
-                    className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold tracking-wider uppercase text-[11px] flex items-center gap-1.5 shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all cursor-pointer"
+                  <Link
+                    href={`/forms/${item.form_id}`}
+                    className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold tracking-wider uppercase text-[11px] flex items-center gap-1.5 shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all"
                   >
                     <span>Fill Form</span>
                     <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
         )}
-
-        {/* Selected Form Modal */}
-        <FormModal
-          formId={selectedFormId}
-          isOpen={Boolean(selectedFormId)}
-          onClose={() => setSelectedFormId(null)}
-        />
       </main>
 
       <Sidebar />
