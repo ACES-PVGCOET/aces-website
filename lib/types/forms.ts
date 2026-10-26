@@ -1,4 +1,13 @@
+<<<<<<< HEAD
 export type QuestionType = 'textual' | 'multiple_choice' | 'file' | 'payment_acceptance';
+=======
+export type QuestionType =
+  | 'textual'
+  | 'multiple_choice'
+  | 'file'
+  | 'payment_acceptance'
+  | 'payment_checkout';
+>>>>>>> 7bd5c5d (feat: add payment checkout and acceptance components to FormModal)
 
 export interface TextualPolicy {
   max_len: number;
@@ -20,17 +29,35 @@ export interface PaymentPolicy {
   fallback_qr_url?: string;
 }
 
+<<<<<<< HEAD
+=======
+export interface PaymentCheckoutItem {
+  title: string;
+  cost: number;
+}
+
+export interface PaymentCheckoutPolicy {
+  items: PaymentCheckoutItem[];
+  primary_qr_url: string;
+  fallback_qr_url?: string;
+}
+
+>>>>>>> 7bd5c5d (feat: add payment checkout and acceptance components to FormModal)
 export interface FormQuestion {
   question_id?: string;
   question_serial: number;
   question_statement: string;
-  question_type: QuestionType;
+  question_type: QuestionType | string;
   is_required: boolean;
   image_url?: string;
   textual_policy?: TextualPolicy;
   multiple_choice_policy?: MultipleChoicePolicy;
   file_policy?: FilePolicy;
   payment_policy?: PaymentPolicy;
+<<<<<<< HEAD
+=======
+  payment_checkout_policy?: PaymentCheckoutPolicy;
+>>>>>>> 7bd5c5d (feat: add payment checkout and acceptance components to FormModal)
 }
 
 export interface FormDetail {
