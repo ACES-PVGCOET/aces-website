@@ -15,6 +15,11 @@ import {
   ArrowUpRight,
   Copy,
   Check,
+  ShoppingCart,
+  QrCode,
+  CreditCard,
+  RotateCcw,
+  Receipt,
 } from "lucide-react";
 
 interface DynamicFormRendererProps {
@@ -37,6 +42,8 @@ export default function DynamicFormRenderer({
   const [isSubmittedSuccess, setIsSubmittedSuccess] = useState<boolean>(false);
   const [uploadingFiles, setUploadingFiles] = useState<Record<string, boolean>>({});
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
+  const [checkoutSelections, setCheckoutSelections] = useState<Record<string, number[]>>({});
+  const [activeQrSource, setActiveQrSource] = useState<Record<string, "primary" | "fallback">>({});
 
   const handleCopyLink = async (link: string) => {
     try {
@@ -100,6 +107,42 @@ export default function DynamicFormRenderer({
     setAnswersMap((prev) => ({
       ...prev,
       [key]: updated,
+    }));
+  };
+
+  const handleToggleCheckoutItem = (serial: number, itemIdx: number) => {
+    const key = String(serial);
+    const current = checkoutSelections[key] || [];
+    const exists = current.includes(itemIdx);
+    const updated = exists ? current.filter((idx) => idx !== itemIdx) : [...current, itemIdx];
+    setCheckoutSelections((prev) => ({
+      ...prev,
+      [key]: updated,
+    }));
+  };
+
+  const handleSelectAllCheckoutItems = (serial: number, count: number) => {
+    const key = String(serial);
+    const allIndices = Array.from({ length: count }, (_, i) => i);
+    setCheckoutSelections((prev) => ({
+      ...prev,
+      [key]: allIndices,
+    }));
+  };
+
+  const handleClearCheckoutItems = (serial: number) => {
+    const key = String(serial);
+    setCheckoutSelections((prev) => ({
+      ...prev,
+      [key]: [],
+    }));
+  };
+
+  const toggleQrSource = (serial: number) => {
+    const key = String(serial);
+    setActiveQrSource((prev) => ({
+      ...prev,
+      [key]: prev[key] === "fallback" ? "primary" : "fallback",
     }));
   };
 
@@ -202,7 +245,44 @@ export default function DynamicFormRenderer({
     for (const q of form.questions || []) {
       const serialKey = String(q.question_serial);
       const answerArr = answersMap[serialKey] || [];
-      if (q.is_required && (answerArr.length === 0 || !answerArr[0]?.trim())) {
+      const qType = (q.question_type || "").toLowerCase();
+
+      if (qType === "payment_checkout") {
+        const selected = checkoutSelections[serialKey] || [];
+        if (q.is_required && selected.length === 0) {
+          setErrorMsg(`Question #${q.question_serial} ("${q.question_statement}"): Please select at least one item.`);
+          const element = document.getElementById(`question-card-${q.question_serial}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+          return;
+        }
+        if (q.is_required && (!answerArr || answerArr.length === 0 || !answerArr[0]?.trim())) {
+          setErrorMsg(`Question #${q.question_serial} ("${q.question_statement}"): Please upload your payment confirmation screenshot.`);
+          const element = document.getElementById(`question-card-${q.question_serial}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+          return;
+        }
+        if (selected.length > 0 && (!answerArr || answerArr.length === 0 || !answerArr[0]?.trim())) {
+          setErrorMsg(`Question #${q.question_serial}: You have selected item(s). Please upload your payment confirmation screenshot before submitting.`);
+          const element = document.getElementById(`question-card-${q.question_serial}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+          return;
+        }
+      } else if (qType === "payment_acceptance") {
+        if (q.is_required && (!answerArr || answerArr.length === 0 || !answerArr[0]?.trim())) {
+          setErrorMsg(`Question #${q.question_serial} ("${q.question_statement}"): Payment confirmation screenshot is required.`);
+          const element = document.getElementById(`question-card-${q.question_serial}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+          return;
+        }
+      } else if (q.is_required && (answerArr.length === 0 || !answerArr[0]?.trim())) {
         setErrorMsg(`"${q.question_statement}" is required.`);
         const element = document.getElementById(`question-card-${q.question_serial}`);
         if (element) {
@@ -690,6 +770,271 @@ export default function DynamicFormRenderer({
                           </label>
                         )}
                       </div>
+                    </div>
+                  )}
+
+                  {/* PAYMENT CHECKOUT */}
+                  {q.question_type?.toLowerCase() === "payment_checkout" && (
+                    <div className="space-y-4 pt-1">
+                      {/* Cart Items Selector */}
+                      <div className="p-4 rounded-2xl bg-black/40 border border-purple-900/50 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <ShoppingCart className="w-4 h-4 text-purple-400" />
+                            <span className="text-xs font-mono font-bold uppercase tracking-wider text-purple-300">
+                              Select Item(s)
+                            </span>
+                          </div>
+
+                          {((q.payment_checkout_policy?.items || []).length > 1) && (
+                            <div className="flex items-center gap-2 text-[11px] font-mono">
+                              <button
+                                type="button"
+                                disabled={!form.is_active}
+                                onClick={() =>
+                                  handleSelectAllCheckoutItems(
+                                    q.question_serial,
+                                    (q.payment_checkout_policy?.items || []).length
+                                  )
+                                }
+                                className="text-purple-400 hover:text-purple-300 hover:underline cursor-pointer disabled:opacity-50"
+                              >
+                                Select All
+                              </button>
+                              <span className="text-purple-800">|</span>
+                              <button
+                                type="button"
+                                disabled={!form.is_active}
+                                onClick={() => handleClearCheckoutItems(q.question_serial)}
+                                className="text-slate-400 hover:text-slate-300 hover:underline cursor-pointer disabled:opacity-50"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Items List */}
+                        <div className="space-y-2">
+                          {(q.payment_checkout_policy?.items || []).map((item, itemIdx) => {
+                            const isSelected = (checkoutSelections[serialKey] || []).includes(itemIdx);
+                            return (
+                              <div
+                                key={itemIdx}
+                                onClick={() => {
+                                  if (form.is_active) {
+                                    handleToggleCheckoutItem(q.question_serial, itemIdx);
+                                  }
+                                }}
+                                className={`flex items-center justify-between p-3 rounded-xl border text-xs transition-all cursor-pointer select-none ${
+                                  isSelected
+                                    ? "bg-purple-900/40 border-purple-500/70 text-white shadow-[0_0_15px_rgba(168,85,247,0.2)]"
+                                    : "bg-black/30 border-purple-900/30 text-slate-300 hover:border-purple-800/60 hover:bg-purple-950/20"
+                                }`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div
+                                    className={`w-4 h-4 rounded flex items-center justify-center border transition-all ${
+                                      isSelected
+                                        ? "bg-purple-600 border-purple-400 text-white"
+                                        : "border-purple-800 bg-black/40"
+                                    }`}
+                                  >
+                                    {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                                  </div>
+                                  <span className="font-semibold">{item.title}</span>
+                                </div>
+
+                                <div className="flex items-center font-mono font-bold text-xs px-2.5 py-1 rounded-lg bg-purple-950/60 border border-purple-700/40 text-purple-200">
+                                  ₹{item.cost.toLocaleString("en-IN")}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Total Due Row */}
+                        {(() => {
+                          const items = q.payment_checkout_policy?.items || [];
+                          const selected = checkoutSelections[serialKey] || [];
+                          const totalDue = selected.reduce((sum, idx) => sum + (items[idx]?.cost || 0), 0);
+
+                          return (
+                            <div className="mt-3 pt-3 border-t border-purple-900/40 flex items-center justify-between">
+                              <div className="text-[11px] font-mono text-purple-300/80">
+                                <span>Selected: </span>
+                                <span className="font-bold text-white">{selected.length}</span>
+                                <span> of {items.length} item(s)</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-mono uppercase text-slate-300">Total Due:</span>
+                                <span className="text-sm sm:text-base font-extrabold font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                                  ₹{totalDue.toLocaleString("en-IN")}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })()}
+                      </div>
+
+                      {/* UPI QR Code Container */}
+                      {(() => {
+                        const items = q.payment_checkout_policy?.items || [];
+                        const selected = checkoutSelections[serialKey] || [];
+                        const totalDue = selected.reduce((sum, idx) => sum + (items[idx]?.cost || 0), 0);
+                        const qrMode = activeQrSource[serialKey] || "primary";
+                        const qrUrl =
+                          qrMode === "fallback" && q.payment_checkout_policy?.fallback_qr_url
+                            ? q.payment_checkout_policy.fallback_qr_url
+                            : q.payment_checkout_policy?.primary_qr_url;
+
+                        return (
+                          <div className="p-4 rounded-2xl bg-purple-950/25 border border-purple-800/40 space-y-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <QrCode className="w-4 h-4 text-purple-400 shrink-0" />
+                                <div>
+                                  <h4 className="text-xs font-bold font-mono uppercase text-purple-200">
+                                    Scan & Pay via UPI
+                                  </h4>
+                                  <p className="text-[11px] text-slate-400">
+                                    Scan using Google Pay, PhonePe, Paytm, BHIM, or any UPI app
+                                  </p>
+                                </div>
+                              </div>
+
+                              {q.payment_checkout_policy?.fallback_qr_url && (
+                                <button
+                                  type="button"
+                                  onClick={() => toggleQrSource(q.question_serial)}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-900/40 hover:bg-purple-900/70 border border-purple-600/40 text-[10px] font-mono text-purple-200 transition-all cursor-pointer self-start sm:self-auto"
+                                >
+                                  <RotateCcw className="w-3 h-3" />
+                                  <span>
+                                    {qrMode === "primary" ? "Switch to Backup QR" : "Switch to Primary QR"}
+                                  </span>
+                                </button>
+                              )}
+                            </div>
+
+                            {qrUrl ? (
+                              <div className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl bg-black/40 border border-purple-900/40 space-y-3">
+                                <div className="p-3 bg-white rounded-2xl shadow-xl border-2 border-purple-400/50 transition-transform hover:scale-[1.02]">
+                                  <img
+                                    src={qrUrl}
+                                    alt="UPI Payment QR Code"
+                                    className="w-44 h-44 sm:w-48 sm:h-48 object-contain"
+                                  />
+                                </div>
+
+                                <div className="text-center space-y-1">
+                                  <div className="text-xs font-mono font-bold text-purple-200">
+                                    Amount to Pay:{" "}
+                                    <span className="text-emerald-400">
+                                      ₹{totalDue.toLocaleString("en-IN")}
+                                    </span>
+                                  </div>
+                                  <a
+                                    href={qrUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-[11px] text-purple-300 hover:text-white underline font-mono cursor-pointer"
+                                  >
+                                    <span>Open QR code image in new tab</span>
+                                    <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="p-4 rounded-xl bg-black/30 border border-purple-900/30 text-center text-xs font-mono text-purple-300/70">
+                                QR Code image not available for this checkout.
+                              </div>
+                            )}
+
+                            {/* Payment Proof Upload */}
+                            <div className="space-y-2 pt-2 border-t border-purple-900/30">
+                              <div className="flex items-center justify-between">
+                                <label className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+                                  <Receipt className="w-3.5 h-3.5 text-purple-400" />
+                                  <span>Upload Payment Confirmation Screenshot</span>
+                                  {q.is_required && <span className="text-red-400 font-bold ml-1">*</span>}
+                                </label>
+                                <span className="text-[10px] font-mono text-slate-400">
+                                  Max 10MB
+                                </span>
+                              </div>
+
+                              {answersMap[serialKey]?.[0] ? (
+                                <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between text-xs font-mono text-emerald-300">
+                                  <div className="flex items-center gap-2 truncate pr-2">
+                                    <FileCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                                    <span className="truncate">{answersMap[serialKey][0]}</span>
+                                  </div>
+                                  <div className="flex items-center gap-3 shrink-0">
+                                    <a
+                                      href={answersMap[serialKey][0]}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[11px] text-emerald-300 hover:text-white font-bold hover:underline cursor-pointer"
+                                    >
+                                      View
+                                    </a>
+                                    <label className="text-[11px] text-purple-300 hover:text-white font-bold cursor-pointer hover:underline">
+                                      <span>Replace</span>
+                                      <input
+                                        type="file"
+                                        accept="image/*,application/pdf"
+                                        disabled={!form.is_active || uploadingFiles[serialKey]}
+                                        onChange={(e) =>
+                                          handlePaymentScreenshotUpload(q.question_serial, e.target.files?.[0])
+                                        }
+                                        className="hidden"
+                                      />
+                                    </label>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleTextChange(q.question_serial, "")}
+                                      className="text-[11px] text-red-400 hover:text-red-300 font-bold hover:underline cursor-pointer"
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <label className="p-4 sm:p-5 border-2 border-dashed border-purple-900/60 hover:border-purple-500/60 bg-black/40 hover:bg-purple-950/20 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer transition-all">
+                                  {uploadingFiles[serialKey] ? (
+                                    <div className="flex items-center gap-2 text-purple-300 py-1">
+                                      <Loader2 className="w-5 h-5 animate-spin text-purple-400" />
+                                      <span className="text-xs font-mono font-semibold">
+                                        Uploading payment proof...
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <UploadCloud className="w-7 h-7 mb-1.5 text-purple-400" />
+                                      <span className="text-xs font-semibold text-slate-200">
+                                        Click to upload payment screenshot
+                                      </span>
+                                      <span className="text-[10px] font-mono text-purple-300/70 mt-1">
+                                        PNG, JPG, WEBP, PDF (Max 10MB)
+                                      </span>
+                                    </>
+                                  )}
+                                  <input
+                                    type="file"
+                                    accept="image/*,application/pdf"
+                                    disabled={!form.is_active || uploadingFiles[serialKey]}
+                                    onChange={(e) =>
+                                      handlePaymentScreenshotUpload(q.question_serial, e.target.files?.[0])
+                                    }
+                                    className="hidden"
+                                  />
+                                </label>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   )}
 
