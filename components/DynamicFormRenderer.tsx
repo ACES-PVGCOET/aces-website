@@ -241,6 +241,8 @@ export default function DynamicFormRenderer({
       return;
     }
 
+    const finalAnswers: Record<string, string[]> = { ...answersMap };
+
     // Check required questions
     for (const q of form.questions || []) {
       const serialKey = String(q.question_serial);
@@ -249,6 +251,8 @@ export default function DynamicFormRenderer({
 
       if (qType === "payment_checkout") {
         const selected = checkoutSelections[serialKey] || [];
+        const screenshotUrl = (answerArr || []).find((s) => /^https?:\/\/.+/i.test(s?.trim())) || "";
+
         if (q.is_required && selected.length === 0) {
           setErrorMsg(`Question #${q.question_serial} ("${q.question_statement}"): Please select at least one item.`);
           const element = document.getElementById(`question-card-${q.question_serial}`);
@@ -257,7 +261,7 @@ export default function DynamicFormRenderer({
           }
           return;
         }
-        if (q.is_required && (!answerArr || answerArr.length === 0 || !answerArr[0]?.trim())) {
+        if (q.is_required && !screenshotUrl) {
           setErrorMsg(`Question #${q.question_serial} ("${q.question_statement}"): Please upload your payment confirmation screenshot.`);
           const element = document.getElementById(`question-card-${q.question_serial}`);
           if (element) {
@@ -265,7 +269,7 @@ export default function DynamicFormRenderer({
           }
           return;
         }
-        if (selected.length > 0 && (!answerArr || answerArr.length === 0 || !answerArr[0]?.trim())) {
+        if (selected.length > 0 && !screenshotUrl) {
           setErrorMsg(`Question #${q.question_serial}: You have selected item(s). Please upload your payment confirmation screenshot before submitting.`);
           const element = document.getElementById(`question-card-${q.question_serial}`);
           if (element) {
@@ -273,6 +277,15 @@ export default function DynamicFormRenderer({
           }
           return;
         }
+
+        const items = q.payment_checkout_policy?.items || [];
+        const selectedTitles = selected
+          .map((idx) => items[idx]?.title)
+          .filter(Boolean) as string[];
+
+        finalAnswers[serialKey] = screenshotUrl
+          ? [...selectedTitles, screenshotUrl]
+          : selectedTitles;
       } else if (qType === "payment_acceptance") {
         if (q.is_required && (!answerArr || answerArr.length === 0 || !answerArr[0]?.trim())) {
           setErrorMsg(`Question #${q.question_serial} ("${q.question_statement}"): Payment confirmation screenshot is required.`);
@@ -296,7 +309,7 @@ export default function DynamicFormRenderer({
       setIsSubmitting(true);
       await submitFormResponse(form.form_id, {
         email: trimmedEmail,
-        answers: answersMap,
+        answers: finalAnswers,
       });
       setIsSubmittedSuccess(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
