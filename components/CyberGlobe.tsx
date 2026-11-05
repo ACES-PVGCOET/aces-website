@@ -36,6 +36,10 @@ const HUB_LOCATIONS = [
   { name: "Sydney", lat: -33.8688, lng: 151.2093 },
 ];
 
+// One extra HTML layer point, always mounted but hidden until India is celebrated.
+const INDIA_FESTIVAL = { lat: 22.4, lng: 79.0, isFestival: true };
+const GLOBE_HTML_POINTS = [...HUB_LOCATIONS, INDIA_FESTIVAL];
+
 // 2a. Global High-Altitude 3D Network Arcs
 const HIGH_ALTITUDE_ARCS = [
   { startLat: 51.5074, startLng: -0.1278, endLat: 40.7128, endLng: -74.0060, arcAlt: 0.32 },   // London ↔ NYC
@@ -111,6 +115,14 @@ function isPointInFeature(pt: [number, number], feature: any) {
   return false;
 }
 
+function isIndiaFeature(feature: any) {
+  return (
+    feature?.properties?.NAME === "India" ||
+    feature?.properties?.ISO_A2 === "IN" ||
+    feature?.properties?.ADM0_A3 === "IND"
+  );
+}
+
 // Convert spherical (lat, lng, alt) to Cartesian Vector3
 function getCartesianCoords(lat: number, lng: number, alt: number = 0.006, radius: number = 100) {
   const r = radius * (1 + alt);
@@ -130,9 +142,28 @@ export default function CyberGlobe() {
   const animFrameRef = useRef<number>(0);
   const dot3DDataRef = useRef<any[]>([]);
 
+  // India Diwali celebration refs — kept outside React state so hovering a
+  // country does not re-render the WebGL globe or rebuild its layers.
+  const indiaFireworksRef = useRef<HTMLElement | null>(null);
+  const isIndiaHoveredRef = useRef(false);
+  const isIndiaClickCelebratingRef = useRef(false);
+  const indiaCelebrationRef = useRef(false);
+  const celebrationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pointerDownPosRef = useRef<{ x: number; y: number } | null>(null);
+  const pointerInsideRef = useRef(false);
+  const suppressHoverRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const hasMountedRef = useRef(false);
+  const pendingGlobeReadyRef = useRef(false);
+
   const [countriesData, setCountriesData] = useState<any>({ features: [] });
   const [dimensions, setDimensions] = useState({ width: 600, height: 600 });
   const [globeReady, setGlobeReady] = useState(false);
+
+  const indiaFeature = useMemo(
+    () => (countriesData?.features || []).find(isIndiaFeature) ?? null,
+    [countriesData]
+  );
 
   // Randomized Network Arcs with unique initial gaps, speeds, and dash parameters
   const randomizedNetworkArcs = useMemo(() => {
@@ -149,7 +180,9 @@ export default function CyberGlobe() {
   useEffect(() => {
     fetch("/ne_110m_admin_0_countries.geojson")
       .then((res) => res.json())
-      .then((data) => setCountriesData(data))
+      .then((data) => {
+        if (isMountedRef.current) setCountriesData(data);
+      })
       .catch((err) => console.error("Failed to load country GeoJSON:", err));
   }, []);
 
@@ -178,10 +211,7 @@ export default function CyberGlobe() {
 
         for (const feature of countriesData.features) {
           if (isPointInFeature([sampleLng, sampleLat], feature)) {
-            const isIndia =
-              feature.properties?.NAME === "India" ||
-              feature.properties?.ISO_A2 === "IN" ||
-              feature.properties?.ADM0_A3 === "IND";
+            const isIndia = isIndiaFeature(feature);
 
             // If it's India, skip in this pass so we can generate a dedicated sparkling golden Diwali constellation!
             if (isIndia) break;
@@ -214,12 +244,7 @@ export default function CyberGlobe() {
     }
 
     // Dedicated Diwali Festive Pass for India: Glowing Yellow-Golden Sparkling Points
-    const indiaFeature = countriesData.features.find(
-      (f: any) =>
-        f.properties?.NAME === "India" ||
-        f.properties?.ISO_A2 === "IN" ||
-        f.properties?.ADM0_A3 === "IND"
-    );
+    const indiaFeature = countriesData.features.find(isIndiaFeature);
 
     if (indiaFeature) {
       // Step = 1.6° creates a rich, sparkling constellation of ~110 golden diyas across India
@@ -294,7 +319,7 @@ export default function CyberGlobe() {
       if (containerRef.current) {
         const w = containerRef.current.clientWidth;
         const h = containerRef.current.clientHeight;
-        if (w > 0 && h > 0) {
+        if (w > 0 && h > 0 && isMountedRef.current) {
           setDimensions({ width: w, height: h });
         }
       }
@@ -331,7 +356,7 @@ export default function CyberGlobe() {
     // ── Orbit controls ──
     const controls = globeObj.controls?.();
     if (controls) {
-      controls.autoRotate      = true;
+      controls.autoRotate      = !indiaCelebrationRef.current;
       controls.autoRotateSpeed = 0.70;
       controls.enableZoom      = false;
       controls.enablePan       = false;
@@ -342,7 +367,8 @@ export default function CyberGlobe() {
     }
 
     if (globeObj.pointOfView) {
-      globeObj.pointOfView({ lat: 15, lng: 12, altitude: 2.0 }, 0);
+      // Start with India in view so the festival interaction is discoverable.
+      globeObj.pointOfView({ lat: 22, lng: 79, altitude: 2.0 }, 0);
     }
 
     const scene = globeObj.scene?.();
@@ -469,22 +495,250 @@ export default function CyberGlobe() {
     return () => cancelAnimationFrame(animFrameRef.current);
   }, [globeReady, landDotMatrixPoints]);
 
+  // Toggle the celebration directly in the DOM and pause the orbit so the
+  // globe holds still while the crackers are popping over India.
+  const applyIndiaCelebration = () => {
+    const active = isIndiaHoveredRef.current || isIndiaClickCelebratingRef.current;
+    indiaCelebrationRef.current = active;
+
+    indiaFireworksRef.current?.classList.toggle("is-active", active);
+    containerRef.current?.classList.toggle("is-india-celebrating", active);
+
+    const controls = (globeRef.current as any)?.controls?.();
+    if (controls) {
+      controls.autoRotate = !active;
+      // Flush any residual auto-rotate inertia so the globe holds still
+      // immediately instead of drifting out from under the cursor.
+      controls.dampingFactor = active ? 1 : 0.05;
+    }
+  };
+
+  const handlePolygonHover = (polygon: any) => {
+    // The globe keeps raycasting from the last pointer position even after the
+    // cursor leaves; ignore those stale hover events.
+    const nextHover = pointerInsideRef.current && isIndiaFeature(polygon);
+    if (isIndiaHoveredRef.current === nextHover) return;
+    isIndiaHoveredRef.current = nextHover;
+    applyIndiaCelebration();
+  };
+
+  const triggerIndiaClickCelebration = () => {
+    isIndiaClickCelebratingRef.current = true;
+    applyIndiaCelebration();
+
+    if (celebrationTimeoutRef.current) clearTimeout(celebrationTimeoutRef.current);
+    celebrationTimeoutRef.current = setTimeout(() => {
+      isIndiaClickCelebratingRef.current = false;
+      applyIndiaCelebration();
+    }, 5200);
+  };
+
+  const handleGlobePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 0 || !(event.target instanceof HTMLCanvasElement)) return;
+    pointerDownPosRef.current = { x: event.clientX, y: event.clientY };
+  };
+
+  const handleGlobePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    const down = pointerDownPosRef.current;
+    pointerDownPosRef.current = null;
+    if (!down || event.button !== 0 || !(event.target instanceof HTMLCanvasElement)) return;
+    if (Math.hypot(event.clientX - down.x, event.clientY - down.y) > 8) return;
+
+    const wrapper = containerRef.current;
+    const globe = globeRef.current as any;
+    if (!wrapper || !globe?.toGlobeCoords || !indiaFeature) return;
+
+    const rect = wrapper.getBoundingClientRect();
+    const coords = globe.toGlobeCoords(event.clientX - rect.left, event.clientY - rect.top);
+    if (!coords) return;
+    if (!isPointInFeature([coords.lng, coords.lat], indiaFeature)) return;
+
+    triggerIndiaClickCelebration();
+
+    // Touch has no persistent hover, so clear stale raycast hover state.
+    if (event.pointerType === "touch") {
+      suppressHoverRef.current = true;
+      pointerInsideRef.current = false;
+      isIndiaHoveredRef.current = false;
+      applyIndiaCelebration();
+    }
+  };
+
+  const handleGlobePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "mouse") return;
+    suppressHoverRef.current = false;
+    pointerInsideRef.current = true;
+
+    // Re-evaluate hover directly from the cursor position. This also recovers
+    // cleanly after leaving and re-entering India, instead of waiting for the
+    // globe's internal hover object to change.
+    const wrapper = containerRef.current;
+    const globe = globeRef.current as any;
+    if (!wrapper || !globe?.toGlobeCoords || !indiaFeature) return;
+
+    const rect = wrapper.getBoundingClientRect();
+    const coords = globe.toGlobeCoords(event.clientX - rect.left, event.clientY - rect.top);
+    const nextHover = Boolean(coords) && isPointInFeature([coords.lng, coords.lat], indiaFeature);
+
+    if (isIndiaHoveredRef.current === nextHover) return;
+    isIndiaHoveredRef.current = nextHover;
+    applyIndiaCelebration();
+  };
+
+  const handleGlobeEnter = () => {
+    if (!suppressHoverRef.current) pointerInsideRef.current = true;
+  };
+
+  const handleGlobeLeave = () => {
+    pointerInsideRef.current = false;
+    isIndiaHoveredRef.current = false;
+    applyIndiaCelebration();
+  };
+
+  useEffect(() => {
+    hasMountedRef.current = true;
+    isMountedRef.current = true;
+    if (pendingGlobeReadyRef.current) setGlobeReady(true);
+    return () => {
+      isMountedRef.current = false;
+      if (celebrationTimeoutRef.current) clearTimeout(celebrationTimeoutRef.current);
+    };
+  }, []);
+
   return (
     <div
       ref={containerRef}
+      data-cyber-globe="true"
       className="relative w-full h-[520px] sm:h-[620px] lg:h-[720px] flex flex-col items-center justify-center select-none overflow-hidden"
+      onMouseEnter={handleGlobeEnter}
+      onMouseLeave={handleGlobeLeave}
+      onPointerDown={handleGlobePointerDown}
+      onPointerMove={handleGlobePointerMove}
+      onPointerUp={handleGlobePointerUp}
     >
-      {/* Keyframes for ping animation injected once */}
+      {/* Keyframes for hub pings + the India Diwali cracker overlay */}
       <style>{`
         @keyframes hubPing {
           75%, 100% { transform: scale(2.4); opacity: 0; }
+        }
+
+        .india-diwali-fireworks {
+          pointer-events: none;
+        }
+        .india-diwali-content {
+          position: absolute;
+          inset: 0;
+          opacity: 0;
+          transform: scale(0.82);
+          transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .india-diwali-fireworks.is-active .india-diwali-content {
+          opacity: 1;
+          transform: scale(1);
+        }
+        .india-diwali-fireworks:not(.is-active) .diwali-particle,
+        .india-diwali-fireworks:not(.is-active) .diwali-ring,
+        .india-diwali-fireworks:not(.is-active) .diwali-aura {
+          animation-play-state: paused;
+        }
+        .diwali-aura {
+          position: absolute;
+          inset: 8%;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(250,204,21,0.20) 0%, rgba(251,146,60,0.10) 38%, rgba(251,146,60,0) 72%);
+          animation: diwaliAuraPulse 2.4s ease-in-out infinite;
+        }
+        .diwali-burst {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 0;
+          height: 0;
+          transform: translate(var(--bx), var(--by));
+        }
+        .diwali-ring {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 9px;
+          height: 9px;
+          margin: -4.5px 0 0 -4.5px;
+          border: 1px solid rgba(254,240,138,0.95);
+          border-radius: 50%;
+          animation: diwaliRingExpand 1.35s ease-out infinite;
+          animation-delay: var(--delay);
+        }
+        .diwali-particle {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: var(--size);
+          height: var(--size);
+          border-radius: 50%;
+          background: var(--color);
+          box-shadow: 0 0 5px var(--color), 0 0 12px var(--color);
+          opacity: 0;
+          will-change: transform, opacity;
+          animation: diwaliSparkFly 1.35s cubic-bezier(0.16, 0.84, 0.44, 1) infinite;
+          animation-delay: var(--delay);
+        }
+        .diwali-label {
+          position: absolute;
+          left: 50%;
+          bottom: -4px;
+          transform: translateX(-50%);
+          white-space: nowrap;
+          color: #fef3c7;
+          font-family: inherit;
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          text-shadow: 0 0 8px rgba(250,204,21,0.95), 0 0 18px rgba(251,146,60,0.7);
+        }
+        @keyframes diwaliSparkFly {
+          0% { transform: translate(-50%, -50%) scale(0.35); opacity: 0; }
+          12% { opacity: 1; }
+          72% { opacity: 0.9; }
+          100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.12); opacity: 0; }
+        }
+        @keyframes diwaliRingExpand {
+          0% { transform: scale(0.25); opacity: 0; }
+          16% { opacity: 0.95; }
+          100% { transform: scale(5.2); opacity: 0; }
+        }
+        @keyframes diwaliAuraPulse {
+          0%, 100% { transform: scale(0.82); opacity: 0.55; }
+          50% { transform: scale(1.08); opacity: 0.95; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .india-diwali-fireworks .diwali-particle,
+          .india-diwali-fireworks .diwali-ring,
+          .india-diwali-fireworks .diwali-aura {
+            animation: none;
+          }
+          .india-diwali-fireworks .diwali-particle {
+            opacity: 0.85;
+            transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.4);
+          }
+          .india-diwali-fireworks .diwali-ring {
+            opacity: 0.6;
+            transform: scale(2.2);
+          }
         }
       `}</style>
 
       {/* 3D Cyber Globe */}
       <Globe
         ref={globeRef}
-        onGlobeReady={() => setGlobeReady(true)}
+        onGlobeReady={() => {
+          pendingGlobeReadyRef.current = true;
+          if (!hasMountedRef.current) return;
+          // Defer the state update so it lands after this component's commit.
+          window.setTimeout(() => {
+            if (isMountedRef.current) setGlobeReady(true);
+          }, 0);
+        }}
         width={dimensions.width}
         height={dimensions.height}
         backgroundColor="rgba(0,0,0,0)"
@@ -501,14 +755,11 @@ export default function CyberGlobe() {
         polygonsData={countriesData.features || []}
         polygonCapColor={() => "rgba(0,0,0,0)"}
         polygonSideColor={() => "rgba(0,0,0,0)"}
-        polygonStrokeColor={(feat: any) => {
-          const isIndia =
-            feat?.properties?.NAME === "India" ||
-            feat?.properties?.ISO_A2 === "IN" ||
-            feat?.properties?.ADM0_A3 === "IND";
-          return isIndia ? "rgba(250, 204, 21, 0.85)" : "rgba(192,132,252,0.60)";
-        }}
+        polygonStrokeColor={(feat: any) =>
+          isIndiaFeature(feat) ? "rgba(250, 204, 21, 0.85)" : "rgba(192,132,252,0.60)"
+        }
         polygonAltitude={0.005}
+        onPolygonHover={handlePolygonHover}
 
         // Major hub nodes points
         pointsData={hubPointData}
@@ -547,12 +798,57 @@ export default function CyberGlobe() {
         ringPropagationSpeed={2}
         ringRepeatPeriod={900}
 
-        // HTML star-burst lens-flare elements at each hub city
-        htmlElementsData={HUB_LOCATIONS}
+        // HTML star-burst lens-flare elements at each hub city + hidden India overlay
+        htmlElementsData={GLOBE_HTML_POINTS}
         htmlLat={(d: any) => d.lat}
         htmlLng={(d: any) => d.lng}
-        htmlAltitude={0.042}
+        htmlAltitude={(d: any) => (d?.isFestival ? 0.02 : 0.042)}
         htmlElement={(d: any) => {
+          if (d?.isFestival) {
+            const el = document.createElement("div");
+            el.className = "india-diwali-fireworks";
+            el.style.cssText = "width:160px;height:160px;pointer-events:none;";
+            el.setAttribute("aria-hidden", "true");
+
+            const colors = ["#fff7cc", "#fef08a", "#fde047", "#facc15", "#fbbf24", "#fb923c"];
+            const bursts = [
+              { x: -30, y: -18, delay: 0.0 },
+              { x: 26, y: -26, delay: 0.34 },
+              { x: -8, y: 22, delay: 0.68 },
+              { x: 34, y: 18, delay: 0.18 },
+              { x: -38, y: 10, delay: 0.52 },
+            ];
+
+            const burstHtml = bursts
+              .map((burst, burstIndex) => {
+                const particles = Array.from({ length: 7 }, (_, i) => {
+                  const angle = (i / 7) * Math.PI * 2 + Math.random() * 0.55;
+                  const distance = 20 + Math.random() * 26;
+                  const dx = Math.cos(angle) * distance;
+                  const dy = Math.sin(angle) * distance;
+                  const delay = burst.delay + Math.random() * 0.16;
+                  const size = 1.5 + Math.random() * 2.2;
+                  const color = colors[(burstIndex + i) % colors.length];
+                  return `<span class="diwali-particle" style="--dx:${dx.toFixed(1)}px;--dy:${dy.toFixed(1)}px;--delay:${delay.toFixed(2)}s;--size:${size.toFixed(1)}px;--color:${color};"></span>`;
+                }).join("");
+
+                return `<div class="diwali-burst" style="--bx:${burst.x}px;--by:${burst.y}px;--delay:${burst.delay}s;"><span class="diwali-ring"></span>${particles}</div>`;
+              })
+              .join("");
+
+            el.innerHTML = `
+              <div class="india-diwali-content">
+                <div class="diwali-aura"></div>
+                ${burstHtml}
+                <div class="diwali-label">✦ Happy Diwali ✦</div>
+              </div>
+            `;
+
+            indiaFireworksRef.current = el;
+            if (indiaCelebrationRef.current) el.classList.add("is-active");
+            return el;
+          }
+
           const isNav = Boolean(d?.page);
           const isIndiaHub = d?.name === "Mumbai" || d?.name === "New Delhi";
 
