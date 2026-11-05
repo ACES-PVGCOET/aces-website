@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Dancing+Script:wght@600;700&family=Noto+Sans+Devanagari:wght@600;700;800&family=Rozha+One&family=Zen+Dots&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -37,6 +37,21 @@ body {
   background-size: 100% 100%;
 }
 
+/* Luxury Serif Font Utility for Diwali Theme */
+.font-luxury {
+  font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+}
+
+/* Cursive Font Utility for Diwali Theme */
+.font-cursive {
+  font-family: 'Dancing Script', cursive, serif;
+}
+
+/* Devnagari Festive Typography Utility */
+.font-devnagari {
+  font-family: 'Rozha One', 'Noto Sans Devanagari', 'Mangal', 'Segoe UI Historic', serif;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -50,4 +65,209 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #a855f7;
+}
+
+/* =========================================================================
+   Diwali Hanging Diyas Animations & Keyframes
+   ========================================================================= */
+
+@keyframes diyaSway1 {
+  0%, 100% {
+    transform: rotate(-2.8deg);
+  }
+  50% {
+    transform: rotate(2.4deg);
+  }
+}
+
+@keyframes diyaSway2 {
+  0%, 100% {
+    transform: rotate(2.2deg);
+  }
+  50% {
+    transform: rotate(-2.0deg);
+  }
+}
+
+@keyframes diyaSway3 {
+  0%, 100% {
+    transform: rotate(-3.2deg);
+  }
+  50% {
+    transform: rotate(2.8deg);
+  }
+}
+
+@keyframes flameFlicker1 {
+  0%, 100% {
+    transform: scale(1) skewX(0deg);
+    opacity: 0.95;
+  }
+  25% {
+    transform: scaleY(1.08) scaleX(0.96) skewX(-1.5deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleY(0.93) scaleX(1.04) skewX(1.2deg);
+    opacity: 0.88;
+  }
+  75% {
+    transform: scaleY(1.05) scaleX(0.97) skewX(-0.8deg);
+    opacity: 0.98;
+  }
+}
+
+@keyframes flameFlicker2 {
+  0%, 100% {
+    transform: scale(1) skewX(0deg);
+    opacity: 0.93;
+  }
+  30% {
+    transform: scaleY(1.09) scaleX(0.95) skewX(1.8deg);
+    opacity: 1;
+  }
+  60% {
+    transform: scaleY(0.92) scaleX(1.05) skewX(-1.4deg);
+    opacity: 0.86;
+  }
+  85% {
+    transform: scaleY(1.04) scaleX(0.98) skewX(0.5deg);
+    opacity: 0.97;
+  }
+}
+
+@keyframes flameFlicker3 {
+  0%, 100% {
+    transform: scale(1) skewX(0deg);
+    opacity: 0.96;
+  }
+  20% {
+    transform: scaleY(0.94) scaleX(1.03) skewX(-1.2deg);
+    opacity: 0.89;
+  }
+  55% {
+    transform: scaleY(1.1) scaleX(0.95) skewX(1.5deg);
+    opacity: 1;
+  }
+  80% {
+    transform: scaleY(1.03) scaleX(0.98) skewX(-0.6deg);
+    opacity: 0.98;
+  }
+}
+
+@keyframes diyaGlowPulse {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.16);
+  }
+}
+
+@keyframes threadShimmer {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.85;
+  }
+  70% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(220%);
+    opacity: 0;
+  }
+}
+
+@keyframes sparkleRise {
+  0% {
+    transform: translate(0, 0) scale(0);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.9;
+    transform: translate(6px, -15px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(12px, -32px) scale(0.2);
+  }
+}
+
+@keyframes kandilSway {
+  0%, 100% {
+    transform: rotate(-3.5deg);
+  }
+  50% {
+    transform: rotate(3.5deg);
+  }
+}
+
+.animate-diya-sway-1 {
+  animation: diyaSway1 6s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+.animate-diya-sway-2 {
+  animation: diyaSway2 7.2s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+.animate-diya-sway-3 {
+  animation: diyaSway3 5.4s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+.animate-flame-1 {
+  animation: flameFlicker1 1.8s ease-in-out infinite;
+  transform-origin: 34px 38px;
+}
+
+.animate-flame-2 {
+  animation: flameFlicker2 2.3s ease-in-out infinite;
+  transform-origin: 34px 38px;
+}
+
+.animate-flame-3 {
+  animation: flameFlicker3 1.6s ease-in-out infinite;
+  transform-origin: 34px 38px;
+}
+
+.animate-diya-glow {
+  animation: diyaGlowPulse 3s ease-in-out infinite;
+  transform-origin: 34px 25px;
+}
+
+.animate-thread-shimmer {
+  animation: threadShimmer 4.5s ease-in-out infinite;
+}
+
+.animate-diya-sparkle-float {
+  animation: sparkleRise 4s ease-in-out infinite;
+}
+
+.animate-kandil-sway {
+  animation: kandilSway 3s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-diya-sway-1,
+  .animate-diya-sway-2,
+  .animate-diya-sway-3,
+  .animate-kandil-sway {
+    animation: none !important;
+    transform: rotate(0deg) !important;
+  }
+  .animate-flame-1,
+  .animate-flame-2,
+  .animate-flame-3,
+  .animate-thread-shimmer,
+  .animate-diya-sparkle-float {
+    animation: none !important;
+  }
 }

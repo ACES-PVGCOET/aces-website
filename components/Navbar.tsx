@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import Logo from "@/components/Logo";
 import FormModal from "@/components/FormModal";
+import LittleKandil from "@/components/LittleKandil";
 
 export interface NavItem {
   label: string;
@@ -62,9 +63,12 @@ export default function Navbar() {
                     : "hover:text-purple-300 transition-colors"
                 }
               >
-                {item.label}
+                <span>{item.label}</span>
+                {/* Diwali Little Kandil Hanging Active Indicator */}
                 {active && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1 shadow-[0_0_8px_rgba(168,85,247,1)]" />
+                  <div className="absolute top-full -mt-0.5 flex flex-col items-center pointer-events-none">
+                    <LittleKandil />
+                  </div>
                 )}
               </Link>
             );
@@ -109,8 +113,9 @@ export default function Navbar() {
                     }
                   >
                     <span>{item.label}</span>
+                    {/* Diwali Little Kandil Indicator */}
                     {active && (
-                      <span className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(168,85,247,1)]" />
+                      <LittleKandil className="scale-90" />
                     )}
                   </Link>
                 );
@@ -140,4 +145,3 @@ export default function Navbar() {
     </>
   );
 }
-

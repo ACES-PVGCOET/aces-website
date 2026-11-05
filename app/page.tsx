@@ -8,6 +8,9 @@ import ClickSpark from "@/components/ClickSpark";
 import SponsorsSection from "@/components/SponsorsSection";
 import MajorEventsSection from "@/components/MajorEventsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import DiwaliHangingDiyas from "@/components/DiwaliHangingDiyas";
+import DiwaliCelebration from "@/components/DiwaliCelebration";
+import RocketLauncher from "@/components/RocketLauncher";
 
 export default function Home() {
   return (
@@ -19,11 +22,20 @@ export default function Home() {
       <div className="fixed top-1/4 right-1/4 w-[600px] h-[600px] bg-purple-600/5 rounded-full blur-[140px] pointer-events-none z-0" />
       <div className="fixed top-10 left-10 w-96 h-96 bg-violet-600/5 rounded-full blur-[120px] pointer-events-none z-0" />
 
+      {/* Diwali Floating Hanging Diyas (Top-Left Corner Easter Egg) */}
+      <DiwaliHangingDiyas />
+
+      {/* Diwali Fire-crackers Fullscreen Celebration Button & Overlay */}
+      <DiwaliCelebration />
+
+      {/* Interactive Firework Rocket in a Glass Bottle (Bottom-Left Corner) */}
+      <RocketLauncher />
+
       {/* Top Navigation Bar */}
       <Navbar />
 
       {/* Main Hero Section */}
-            <ClickSpark
+      <ClickSpark
         sparkColor="#7016c6"
         sparkSize={10}
         sparkRadius={15}
@@ -44,11 +56,8 @@ export default function Home() {
       {/* Sidebars (Social Links & Scroll Guidance) */}
       <Sidebar />
 
-
       {/* Footer Section */}
       <Footer />
     </div>
   );
 }
-
-

@@ -6,7 +6,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Left Social Links Fixed Sidebar */}
-      <aside className="fixed left-6 bottom-8 z-40 hidden xl:flex flex-col items-center gap-6 text-slate-400">
+      <aside className="fixed left-6 bottom-36 z-30 hidden xl:flex flex-col items-center gap-6 text-slate-400">
         <div className="w-[1px] h-16 bg-gradient-to-b from-transparent via-slate-800 to-purple-500/40" />
 
         <a

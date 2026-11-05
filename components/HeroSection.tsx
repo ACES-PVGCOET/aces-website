@@ -20,16 +20,15 @@ export default function HeroSection() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center w-full">
         
         {/* Left Hero Content */}
-        <div className="lg:col-span-5 space-y-6 pt-4 lg:pt-0 z-20">
-          {/* Tagline */}
-          <div className="text-xs sm:text-sm font-semibold tracking-[0.25em] text-purple-300/90 font-mono uppercase">
-            CONNECT . INNOVATE . INSPIRE
+        <div className="lg:col-span-5 space-y-5 pt-4 lg:pt-0 z-20">
+          
+          {/* Goddess Laxmi resting on top of ACES title */}
+          <div className="relative inline-flex flex-col items-start">
+            {/* Giant Title */}
+            <h1 className="font-zen text-7xl sm:text-8xl lg:text-9xl tracking-tight leading-none text-transparent bg-gradient-to-r from-purple-100 via-purple-300 to-purple-500 bg-clip-text drop-shadow-[0_0_45px_rgba(168,85,247,0.65)]">
+              ACES
+            </h1>
           </div>
-
-          {/* Giant Title */}
-          <h1 className="font-zen text-7xl sm:text-8xl lg:text-9xl tracking-tight leading-none text-transparent bg-gradient-to-r from-purple-100 via-purple-300 to-purple-500 bg-clip-text drop-shadow-[0_0_45px_rgba(168,85,247,0.65)]">
-            ACES
-          </h1>
 
           {/* Sub-headline */}
           <h2 className="text-xl sm:text-2xl font-light text-slate-200 tracking-wide">

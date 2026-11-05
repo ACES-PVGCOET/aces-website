@@ -153,7 +153,7 @@ export default function CyberGlobe() {
       .catch((err) => console.error("Failed to load country GeoJSON:", err));
   }, []);
 
-  // Generate tiny, non-dense land star points across continents
+  // Generate tiny land star points across continents (with golden sparkling Diwali lights for India)
   const landDotMatrixPoints = useMemo(() => {
     if (!countriesData?.features || countriesData.features.length === 0) return [];
 
@@ -162,12 +162,13 @@ export default function CyberGlobe() {
       lng: number;
       baseScale: number;
       baseColor: string;
+      isIndia?: boolean;
       phase: number;
       speed: number;
       flareSeed: number;
     }[] = [];
 
-    // Step = 2.4° yields a clean, spaced-out, non-dense distribution of ~1,400 dots
+    // Step = 2.4° yields a clean, spaced-out, non-dense distribution of ~1,400 dots across world
     const step = 2.4;
 
     for (let lat = -56; lat <= 75; lat += step) {
@@ -177,8 +178,16 @@ export default function CyberGlobe() {
 
         for (const feature of countriesData.features) {
           if (isPointInFeature([sampleLng, sampleLat], feature)) {
+            const isIndia =
+              feature.properties?.NAME === "India" ||
+              feature.properties?.ISO_A2 === "IN" ||
+              feature.properties?.ADM0_A3 === "IND";
+
+            // If it's India, skip in this pass so we can generate a dedicated sparkling golden Diwali constellation!
+            if (isIndia) break;
+
             const r = Math.random();
-            // Colors: Pure White (~12%), Soft White-Lavender (~23%), Bright Violet (~35%), Neon Purple (~30%)
+            // Rest of world: Pure White (~12%), Soft White-Lavender (~23%), Bright Violet (~35%), Neon Purple (~30%)
             const baseColor =
               r > 0.88 ? "#ffffff" :
               r > 0.65 ? "#f3e8ff" :
@@ -193,6 +202,7 @@ export default function CyberGlobe() {
               lng: sampleLng,
               baseScale,
               baseColor,
+              isIndia: false,
               phase: Math.random() * Math.PI * 2,
               speed: 1.2 + Math.random() * 2.8,
               flareSeed: Math.random() * 100,
@@ -203,18 +213,65 @@ export default function CyberGlobe() {
       }
     }
 
+    // Dedicated Diwali Festive Pass for India: Glowing Yellow-Golden Sparkling Points
+    const indiaFeature = countriesData.features.find(
+      (f: any) =>
+        f.properties?.NAME === "India" ||
+        f.properties?.ISO_A2 === "IN" ||
+        f.properties?.ADM0_A3 === "IND"
+    );
+
+    if (indiaFeature) {
+      // Step = 1.6° creates a rich, sparkling constellation of ~110 golden diyas across India
+      const stepIndia = 1.6;
+      for (let lat = 7.5; lat <= 36.5; lat += stepIndia) {
+        for (let lng = 68.0; lng <= 97.5; lng += stepIndia) {
+          const sampleLng = lng + (Math.random() * 0.6 - 0.3);
+          const sampleLat = lat + (Math.random() * 0.6 - 0.3);
+
+          if (isPointInFeature([sampleLng, sampleLat], indiaFeature)) {
+            const r = Math.random();
+            // Shiny, glowing yellow-golden Diwali palette:
+            // White-Gold Diamond Flare (~18%), Shimmering Light Gold (~25%), Bright Golden Yellow (~27%), Pure Gold (~20%), Warm Amber (~10%)
+            const baseColor =
+              r > 0.82 ? "#ffffff" :
+              r > 0.57 ? "#fef08a" :
+              r > 0.30 ? "#fde047" :
+              r > 0.10 ? "#facc15" : "#fbbf24";
+
+            // Slightly more prominent sparkling presence for festival of lights
+            const baseScale = 0.085 + Math.random() * 0.075;
+
+            dots.push({
+              lat: sampleLat,
+              lng: sampleLng,
+              baseScale,
+              baseColor,
+              isIndia: true,
+              phase: Math.random() * Math.PI * 2,
+              speed: 1.5 + Math.random() * 3.2,
+              flareSeed: Math.random() * 100,
+            });
+          }
+        }
+      }
+    }
+
     return dots;
   }, [countriesData]);
 
   // Key Hub Node markers for Globe pointsData
   const hubPointData = useMemo(() => {
-    return HUB_LOCATIONS.map((hub) => ({
-      lat: hub.lat,
-      lng: hub.lng,
-      radius: 0.50,
-      altitude: 0.035,
-      color: "#ffffff",
-    }));
+    return HUB_LOCATIONS.map((hub) => {
+      const isIndiaHub = hub.name === "Mumbai" || hub.name === "New Delhi";
+      return {
+        lat: hub.lat,
+        lng: hub.lng,
+        radius: isIndiaHub ? 0.60 : 0.50,
+        altitude: 0.035,
+        color: isIndiaHub ? "#fde047" : "#ffffff",
+      };
+    });
   }, []);
 
   // Translucent Glass Globe Material (Blackish Dark Translucent)
@@ -331,6 +388,7 @@ export default function CyberGlobe() {
           pos: new THREE.Vector3(coords.x, coords.y, coords.z),
           baseScale: dot.baseScale,
           baseColor: new THREE.Color(dot.baseColor),
+          isIndia: dot.isIndia,
           phase: dot.phase,
           speed: dot.speed,
           flareSeed: dot.flareSeed,
@@ -355,6 +413,7 @@ export default function CyberGlobe() {
     // ── Animation Loop ──
     let tick = 0;
     const whiteColor = new THREE.Color("#ffffff");
+    const goldFlareColor = new THREE.Color("#fffbeb");
     const tempColor = new THREE.Color();
 
     const animate = () => {
@@ -380,8 +439,12 @@ export default function CyberGlobe() {
 
           if (isFlaring) {
             const flareFactor = (flareWave - 0.90) / 0.10; // 0.0 to 1.0
-            scale = dot.baseScale * (1.1 + flareFactor * 2.5); // Expand up to 3.6x
-            tempColor.lerp(whiteColor, 0.85 + flareFactor * 0.15); // Flash pure white star burst
+            scale = dot.baseScale * (1.15 + flareFactor * 2.6); // Expand up to 3.75x
+            if (dot.isIndia) {
+              tempColor.lerp(goldFlareColor, 0.85 + flareFactor * 0.15); // Flash luminous diamond gold burst
+            } else {
+              tempColor.lerp(whiteColor, 0.85 + flareFactor * 0.15); // Flash pure white star burst
+            }
           } else {
             tempColor.multiplyScalar(0.45 + 0.55 * twinkle);
           }
@@ -434,11 +497,17 @@ export default function CyberGlobe() {
         atmosphereColor="#a855f7"
         atmosphereAltitude={0.35}
 
-        // Country polygon outlines
+        // Country polygon outlines (Golden border for India, purple for rest of world)
         polygonsData={countriesData.features || []}
         polygonCapColor={() => "rgba(0,0,0,0)"}
         polygonSideColor={() => "rgba(0,0,0,0)"}
-        polygonStrokeColor={() => "rgba(192,132,252,0.60)"}
+        polygonStrokeColor={(feat: any) => {
+          const isIndia =
+            feat?.properties?.NAME === "India" ||
+            feat?.properties?.ISO_A2 === "IN" ||
+            feat?.properties?.ADM0_A3 === "IND";
+          return isIndia ? "rgba(250, 204, 21, 0.85)" : "rgba(192,132,252,0.60)";
+        }}
         polygonAltitude={0.005}
 
         // Major hub nodes points
@@ -467,7 +536,13 @@ export default function CyberGlobe() {
         ringsData={HUB_LOCATIONS}
         ringLat={(d: any) => d.lat}
         ringLng={(d: any) => d.lng}
-        ringColor={() => (t: number) => `rgba(216,180,254,${Math.sqrt(1 - t) * 0.9})`}
+        ringColor={(d: any) => {
+          const isIndiaHub = d?.name === "Mumbai" || d?.name === "New Delhi";
+          return (t: number) =>
+            isIndiaHub
+              ? `rgba(250,204,21,${Math.sqrt(1 - t) * 0.95})`
+              : `rgba(216,180,254,${Math.sqrt(1 - t) * 0.9})`;
+        }}
         ringMaxRadius={6}
         ringPropagationSpeed={2}
         ringRepeatPeriod={900}
@@ -479,6 +554,7 @@ export default function CyberGlobe() {
         htmlAltitude={0.042}
         htmlElement={(d: any) => {
           const isNav = Boolean(d?.page);
+          const isIndiaHub = d?.name === "Mumbai" || d?.name === "New Delhi";
 
           const el = document.createElement("div");
           el.style.cssText = [
@@ -493,14 +569,26 @@ export default function CyberGlobe() {
             isNav ? "cursor:pointer" : "",
           ].join(";");
 
+          const pingColor1 = isIndiaHub ? "rgba(250,204,21,0.25)" : "rgba(192,132,252,0.18)";
+          const pingColor2 = isIndiaHub ? "rgba(245,158,11,0.30)" : "rgba(168,85,247,0.25)";
+          const coreGlow = isIndiaHub
+            ? `0 0 5px 2px rgba(255,255,255,0.95),
+               0 0 14px 5px rgba(253,224,71,0.90),
+               0 0 28px 10px rgba(250,204,21,0.65),
+               0 0 50px 16px rgba(245,158,11,0.40)`
+            : `0 0 5px 2px rgba(255,255,255,0.95),
+               0 0 14px 5px rgba(216,180,254,0.85),
+               0 0 28px 10px rgba(168,85,247,0.55),
+               0 0 50px 16px rgba(139,92,246,0.30)`;
+
           el.innerHTML = `
             <!-- Outer ping ring 1 -->
             <div style="position:absolute;width:24px;height:24px;border-radius:50%;
-              background:rgba(192,132,252,0.18);
+              background:${pingColor1};
               animation:hubPing 1.6s cubic-bezier(0,0,0.2,1) infinite;"></div>
             <!-- Outer ping ring 2 -->
             <div style="position:absolute;width:16px;height:16px;border-radius:50%;
-              background:rgba(168,85,247,0.25);
+              background:${pingColor2};
               animation:hubPing 1.6s cubic-bezier(0,0,0.2,1) infinite 0.5s;"></div>
             <!-- Vertical spike -->
             <div style="position:absolute;width:1.5px;height:18px;
@@ -518,14 +606,10 @@ export default function CyberGlobe() {
             <div style="position:absolute;width:12px;height:1.5px;
               background:linear-gradient(to right,transparent,rgba(255,255,255,0.65),transparent);
               border-radius:1px;transform:rotate(45deg);"></div>
-            <!-- Bright white core -->
-            <div class="cyber-globe-core" style="width:5px;height:5px;border-radius:50%;background:white;z-index:10;
+            <!-- Bright white core with thematic glow -->
+            <div class="cyber-globe-core" style="width:5px;height:5px;border-radius:50%;background:${isIndiaHub ? "#fef08a" : "white"};z-index:10;
               transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
-              box-shadow:
-                0 0 5px 2px rgba(255,255,255,0.95),
-                0 0 14px 5px rgba(216,180,254,0.85),
-                0 0 28px 10px rgba(168,85,247,0.55),
-                0 0 50px 16px rgba(139,92,246,0.30);"></div>
+              box-shadow:${coreGlow};"></div>
             ${
               isNav
                 ? `
