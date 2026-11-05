@@ -255,11 +255,30 @@ body {
   transform-origin: top center;
 }
 
+/* =========================================================================
+   Hero Kandil (hanging inside the curve of the "C" in ACES)
+   ========================================================================= */
+
+@keyframes heroKandilSway {
+  0%, 100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+.animate-hero-kandil-sway {
+  animation: heroKandilSway 6s ease-in-out infinite;
+  transform-origin: top center;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-diya-sway-1,
   .animate-diya-sway-2,
   .animate-diya-sway-3,
-  .animate-kandil-sway {
+  .animate-kandil-sway,
+  .animate-hero-kandil-sway {
     animation: none !important;
     transform: rotate(0deg) !important;
   }
@@ -269,5 +288,23 @@ body {
   .animate-thread-shimmer,
   .animate-diya-sparkle-float {
     animation: none !important;
+  }
+}
+
+/* =========================================================================
+   Sparkler Cursor
+   ========================================================================= */
+
+@media (pointer: fine) {
+  html.sparkler-cursor,
+  html.sparkler-cursor * {
+    cursor: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.sparkler-cursor,
+  html.sparkler-cursor * {
+    cursor: auto !important;
   }
 }
