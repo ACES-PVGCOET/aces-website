@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ArrowRight } from "lucide-react";
 import CyberGlobeSkeleton from "@/components/CyberGlobeSkeleton";
+import HeroKandil from "@/components/HeroKandil";
 import Particles from "./Particles";
 
 // Dynamic import with ssr: false for WebGL 3D Globe
@@ -24,9 +25,14 @@ export default function HeroSection() {
           
           {/* Goddess Laxmi resting on top of ACES title */}
           <div className="relative inline-flex flex-col items-start">
-            {/* Giant Title */}
-            <h1 className="font-zen text-7xl sm:text-8xl lg:text-9xl tracking-tight leading-none text-transparent bg-gradient-to-r from-purple-100 via-purple-300 to-purple-500 bg-clip-text drop-shadow-[0_0_45px_rgba(168,85,247,0.65)]">
-              ACES
+            {/* Giant Title — kandil hangs inside the curve of the "C" */}
+            <h1 className="relative font-zen text-7xl sm:text-8xl lg:text-9xl tracking-tight leading-none text-transparent bg-gradient-to-r from-purple-100 via-purple-300 to-purple-500 bg-clip-text drop-shadow-[0_0_45px_rgba(168,85,247,0.65)]">
+              A
+              <span className="relative inline-block">
+                C
+                <HeroKandil className="absolute left-[68%] top-[0.19em] z-20 w-[0.42em] -translate-x-1/2 opacity-95" />
+              </span>
+              ES
             </h1>
           </div>
 

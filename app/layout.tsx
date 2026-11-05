@@ -4,6 +4,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import AnnouncementWidget from "@/components/AnnouncementWidget";
+import SparklerCursor from "@/components/SparklerCursor";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -78,6 +79,7 @@ export default function RootLayout({
       <body className="antialiased bg-black text-slate-100">
         {children}
         <AnnouncementWidget />
+        <SparklerCursor />
       </body>
     </html>
   );
