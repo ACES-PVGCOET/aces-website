@@ -57,7 +57,10 @@ export async function getFormById(formId: string): Promise<FormDetail> {
   }
 }
 
-export async function checkResponseExists(formId: string, email: string): Promise<boolean> {
+export async function checkResponseExists(
+  formId: string,
+  email: string
+): Promise<{ exists: boolean; allow_multiple_responses?: boolean }> {
   const baseUrl = getBaseUrl();
   const url = `${baseUrl}/forms/${encodeURIComponent(formId)}/responses/check?email=${encodeURIComponent(email)}`;
 
@@ -67,13 +70,16 @@ export async function checkResponseExists(formId: string, email: string): Promis
       headers: { Accept: "application/json" },
     });
 
-    if (!res.ok) return false;
+    if (!res.ok) return { exists: false, allow_multiple_responses: false };
 
     const json = await res.json();
-    return Boolean(json.data?.exists);
+    return {
+      exists: Boolean(json.data?.exists),
+      allow_multiple_responses: Boolean(json.data?.allow_multiple_responses),
+    };
   } catch (error) {
     console.warn(`Failed to check response existence for email ${email}:`, error);
-    return false;
+    return { exists: false, allow_multiple_responses: false };
   }
 }
 

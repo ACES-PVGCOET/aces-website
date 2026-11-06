@@ -55,6 +55,7 @@ export interface FormDetail {
   title: string;
   description?: string;
   is_active: boolean;
+  allow_multiple_responses?: boolean;
   whatsapp_group_link?: string;
   whatsapp_qr_code?: string;
   questions: FormQuestion[];
@@ -67,6 +68,7 @@ export interface FormListItem {
   title: string;
   description?: string;
   is_active: boolean;
+  allow_multiple_responses?: boolean;
   question_count: number;
   response_count?: number;
   created_at?: string;
@@ -75,4 +77,11 @@ export interface FormListItem {
 export interface FormSubmitPayload {
   email: string;
   answers: Record<string, string[]>;
+}
+
+export interface FormCheckResponse {
+  form_id: string;
+  email: string;
+  exists: boolean;
+  allow_multiple_responses?: boolean;
 }
