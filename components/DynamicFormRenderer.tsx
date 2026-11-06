@@ -20,6 +20,7 @@ import {
   CreditCard,
   RotateCcw,
   Receipt,
+  Sparkles,
 } from "lucide-react";
 
 interface DynamicFormRendererProps {
@@ -34,7 +35,7 @@ export default function DynamicFormRenderer({
   onClose,
 }: DynamicFormRendererProps) {
   const [fillerEmail, setFillerEmail] = useState<string>("");
-  const [emailCheckStatus, setEmailCheckStatus] = useState<"checking" | "exists" | "available" | null>(null);
+  const [emailCheckStatus, setEmailCheckStatus] = useState<"checking" | "exists" | "multiple_allowed" | "available" | null>(null);
   const [answersMap, setAnswersMap] = useState<Record<string, string[]>>({});
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -74,9 +75,14 @@ export default function DynamicFormRenderer({
 
     try {
       setEmailCheckStatus("checking");
-      const exists = await checkResponseExists(form.form_id, trimmed);
-      if (exists) {
-        setEmailCheckStatus("exists");
+      const checkResult = await checkResponseExists(form.form_id, trimmed);
+      const isMultiAllowed = Boolean(form.allow_multiple_responses || checkResult.allow_multiple_responses);
+      if (checkResult.exists) {
+        if (isMultiAllowed) {
+          setEmailCheckStatus("multiple_allowed");
+        } else {
+          setEmailCheckStatus("exists");
+        }
       } else {
         setEmailCheckStatus("available");
       }
@@ -231,7 +237,7 @@ export default function DynamicFormRenderer({
       return;
     }
 
-    if (emailCheckStatus === "exists") {
+    if (!form.allow_multiple_responses && emailCheckStatus === "exists") {
       setErrorMsg("A response has already been submitted with this email address.");
       return;
     }
@@ -454,9 +460,17 @@ export default function DynamicFormRenderer({
         
         {/* FORM TITLE & DESCRIPTION */}
         <div className="p-6 sm:p-8 border-b border-purple-900/40 space-y-3">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            {form.title}
-          </h1>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              {form.title}
+            </h1>
+            {form.allow_multiple_responses && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-mono font-medium">
+                <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                <span>Multiple Submissions Allowed</span>
+              </span>
+            )}
+          </div>
 
           {form.description && (
             <p className="text-sm sm:text-base text-slate-300 font-light leading-relaxed whitespace-pre-line">
@@ -501,8 +515,10 @@ export default function DynamicFormRenderer({
               onBlur={(e) => handleEmailBlur(e.target.value)}
               placeholder="Enter your email"
               className={`w-full px-3.5 py-2.5 rounded-xl bg-black/50 border text-base sm:text-sm font-sans text-slate-100 placeholder:text-slate-500 focus:outline-none transition-all ${
-                emailCheckStatus === "exists"
+                !form.allow_multiple_responses && emailCheckStatus === "exists"
                   ? "border-red-500 text-red-300 bg-red-500/10"
+                  : emailCheckStatus === "multiple_allowed"
+                  ? "border-purple-500/60 text-purple-300 bg-purple-500/10"
                   : emailCheckStatus === "available"
                   ? "border-emerald-500/60 text-emerald-300"
                   : "border-purple-900/50 focus:border-purple-500"
@@ -511,9 +527,21 @@ export default function DynamicFormRenderer({
             {emailCheckStatus === "checking" && (
               <p className="text-[11px] font-mono text-purple-300">Checking email record...</p>
             )}
-            {emailCheckStatus === "exists" && (
+            {!form.allow_multiple_responses && emailCheckStatus === "exists" && (
               <p className="text-[11px] font-mono text-red-400">
                 A response has already been submitted with this email.
+              </p>
+            )}
+            {emailCheckStatus === "multiple_allowed" && (
+              <p className="text-[11px] font-mono text-purple-300 flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-purple-400 shrink-0" />
+                <span>Previous response detected. Multiple responses are allowed for this form.</span>
+              </p>
+            )}
+            {emailCheckStatus === "available" && (
+              <p className="text-[11px] font-mono text-emerald-400 flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                <span>{form.allow_multiple_responses ? "Email ready. Multiple submissions permitted." : "Email verified. No prior response submitted."}</span>
               </p>
             )}
           </div>
@@ -1062,7 +1090,7 @@ export default function DynamicFormRenderer({
               disabled={
                 !form.is_active ||
                 isSubmitting ||
-                emailCheckStatus === "exists" ||
+                (!form.allow_multiple_responses && emailCheckStatus === "exists") ||
                 Object.values(uploadingFiles).some(Boolean)
               }
               className="w-full sm:w-auto min-h-[44px] px-8 py-2.5 rounded-xl border border-purple-500/50 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
